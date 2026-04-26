@@ -1,0 +1,46 @@
+import { useEffect, useState } from 'react'
+import { supabase } from '../../services/supabase'
+
+function Categories() {
+  const [categories, setCategories] = useState([])
+  const [loading, setLoading] = useState(true)
+
+  useEffect(() => {
+    fetchCategories()
+  }, [])
+
+  const fetchCategories = async () => {
+    const { data, error } = await supabase
+      .from('categories')
+      .select('*')
+      .order('sort_order')
+
+    if (!error) setCategories(data || [])
+    setLoading(false)
+  }
+
+  if (loading) return <div className="py-16 text-center">Загрузка категорий...</div>
+
+  return (
+    <section className="py-16">
+      <div className="container mx-auto px-4">
+        <h2 className="text-3xl font-display font-bold text-center text-[#2D2B26] mb-12">
+          Что мы печём
+        </h2>
+        <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
+          {categories.map((cat) => (
+            <button
+              key={cat.id}
+              className="bg-white rounded-2xl p-6 text-center hover-lift border border-[#EDE6DD] hover:border-[#D96E2A] group transition-all"
+            >
+              <div className="text-4xl mb-3 scale-hover">{cat.icon}</div>
+              <h3 className="font-semibold text-[#2D2B26]">{cat.name}</h3>
+            </button>
+          ))}
+        </div>
+      </div>
+    </section>
+  )
+}
+
+export default Categories
