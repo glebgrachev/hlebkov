@@ -1,19 +1,38 @@
 import { Link } from 'react-router-dom'
+import { useCart } from '../../context/CartContext'
 
 function Header() {
+  const { totalItems } = useCart()
+
   return (
     <header className="sticky top-0 z-50 bg-[#FDF8F0]/95 backdrop-blur-sm border-b border-[#EDE6DD]">
       <div className="container mx-auto px-4 py-4 flex justify-between items-center">
-        <Link to="/" className="text-2xl font-display font-bold text-[#2D2B26] scale-hover inline-block">
+        <Link to="/" className="text-2xl font-display font-bold text-[#2D2B26] scale-hover">
           Хлебков
         </Link>
-        <Link to="/cart" className="relative scale-hover">
-          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
-            <path d="M6 6L6 21L18 21L18 6M6 6L4 6M6 6L9 3M18 6L20 6M18 6L15 3" stroke="currentColor" strokeLinecap="round"/>
-            <circle cx="9" cy="15" r="1" fill="currentColor"/>
-            <circle cx="15" cy="15" r="1" fill="currentColor"/>
-          </svg>
-        </Link>
+        <div className="flex items-center gap-6">
+          <Link to="/catalog" className="hidden md:block text-text-dark hover:text-primary transition">
+            Каталог
+          </Link>
+          <Link to="/cart" className="relative scale-hover">
+            <svg 
+              width="24" 
+              height="24" 
+              viewBox="0 0 24 24" 
+              fill="none" 
+              xmlns="http://www.w3.org/2000/svg"
+              className="text-text-dark"
+            >
+              <path d="M2 7L4 18H20L22 7H2Z" stroke="currentColor" strokeWidth="1.5" fill="none"/>
+              <path d="M7 7V5C7 3.5 8 2 10 2H14C16 2 17 3.5 17 5V7" stroke="currentColor" strokeWidth="1.5" fill="none"/>
+            </svg>
+            {totalItems > 0 && (
+              <span className="absolute -top-2 -right-2 bg-primary text-white text-xs w-5 h-5 rounded-full flex items-center justify-center">
+                {totalItems}
+              </span>
+            )}
+          </Link>
+        </div>
       </div>
     </header>
   )

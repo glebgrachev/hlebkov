@@ -1,9 +1,14 @@
+import { Link } from 'react-router-dom'
 import { useEffect, useState } from 'react'
 import { supabase } from '../../services/supabase'
+import { useCart } from '../../context/CartContext'
 
 function Products() {
   const [products, setProducts] = useState([])
   const [loading, setLoading] = useState(true)
+  const [showToast, setShowToast] = useState(false)
+  const [toastProduct, setToastProduct] = useState(null)
+  const { addToCart } = useCart()
 
   useEffect(() => {
     fetchProducts()
@@ -19,6 +24,16 @@ function Products() {
 
     if (!error) setProducts(data || [])
     setLoading(false)
+  }
+
+  const handleAddToCart = (product) => {
+    addToCart(product)
+    setToastProduct(product)
+    setShowToast(true)
+    setTimeout(() => {
+      setShowToast(false)
+      setToastProduct(null)
+    }, 2000)
   }
 
   if (loading) return <div className="py-16 text-center">Загрузка товаров...</div>
@@ -38,9 +53,10 @@ function Products() {
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
           {products.map((product) => (
-            <div
+            <Link
               key={product.id}
-              className="bg-white rounded-2xl overflow-hidden border border-[#EDE6DD] hover-lift fade-in"
+              to={`/product/${product.id}`}
+              className="block bg-white rounded-2xl overflow-hidden border border-[#EDE6DD] hover-lift fade-in transition"
             >
               <div className="p-6 text-center">
                 <div className="text-6xl mb-4 scale-hover inline-block">
@@ -56,14 +72,29 @@ function Products() {
                     <span className="text-sm text-[#6B635C] line-through">{product.old_price} ₽</span>
                   )}
                 </div>
-                <button className="w-full bg-[#D96E2A] text-white py-2 rounded-full hover:bg-[#B8531E] transition-all scale-hover">
+                <button 
+                  className="w-full bg-[#D96E2A] text-white py-2 rounded-full hover:bg-[#B8531E] transition-all scale-hover"
+                  onClick={(e) => {
+                    e.preventDefault()
+                    handleAddToCart(product)
+                  }}
+                >
                   В корзину
                 </button>
               </div>
-            </div>
+            </Link>
           ))}
         </div>
       </div>
+
+      {/* Toast уведомление */}
+      {showToast && toastProduct && (
+        <div className="fixed bottom-8 left-1/2 -translate-x-1/2 z-50 toast-notification">
+          <div className="bg-[#DEFAE6] text-[#1A4D2A] px-6 py-3 rounded-full shadow-lg text-base font-medium">
+            {toastProduct.name} добавлен в корзину
+          </div>
+        </div>
+      )}
     </section>
   )
 }

@@ -1,3 +1,4 @@
+import { Link } from 'react-router-dom'
 import { useEffect, useState } from 'react'
 import { supabase } from '../../services/supabase'
 
@@ -20,6 +21,7 @@ function Categories() {
   }
 
   if (loading) return <div className="py-16 text-center">Загрузка категорий...</div>
+  if (categories.length === 0) return null
 
   return (
     <section className="py-16">
@@ -29,13 +31,14 @@ function Categories() {
         </h2>
         <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
           {categories.map((cat) => (
-            <button
+            <Link
               key={cat.id}
-              className="bg-white rounded-2xl p-6 text-center hover-lift border border-[#EDE6DD] hover:border-[#D96E2A] group transition-all"
+              to={`/category/${cat.slug}`}
+              className="bg-white rounded-2xl p-6 text-center hover-lift border border-[#EDE6DD] hover:border-[#D96E2A] group transition-all block"
             >
               <div className="text-4xl mb-3 scale-hover">{cat.icon}</div>
               <h3 className="font-semibold text-[#2D2B26]">{cat.name}</h3>
-            </button>
+            </Link>
           ))}
         </div>
       </div>
