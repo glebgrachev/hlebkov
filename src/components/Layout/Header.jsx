@@ -1,8 +1,19 @@
 import { Link } from 'react-router-dom'
 import { useCart } from '../../context/CartContext'
+import { useEffect, useState } from 'react'
+import { supabase } from '../../services/supabase'
 
 function Header() {
   const { totalItems } = useCart()
+  const [user, setUser] = useState(null)
+
+  useEffect(() => {
+    const getUser = async () => {
+      const { data: { user } } = await supabase.auth.getUser()
+      setUser(user)
+    }
+    getUser()
+  }, [])
 
   return (
     <header className="sticky top-0 z-50 bg-[#FDF8F0]/95 backdrop-blur-sm border-b border-[#EDE6DD]">
@@ -14,6 +25,11 @@ function Header() {
           <Link to="/catalog" className="hidden md:block text-text-dark hover:text-primary transition">
             Каталог
           </Link>
+          {user && (
+            <Link to="/my-orders" className="hidden md:block text-text-dark hover:text-primary transition">
+              Мои заказы
+            </Link>
+          )}
           <Link to="/cart" className="relative scale-hover">
             <svg 
               width="24" 

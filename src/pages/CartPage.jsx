@@ -21,7 +21,6 @@ function CartPage() {
       <h1 className="text-3xl font-display font-bold mb-8">Корзина</h1>
 
       <div className="flex flex-col lg:flex-row gap-8">
-        {/* Список товаров */}
         <div className="flex-1">
           {cart.map((item) => (
             <div key={item.id} className="flex items-center gap-4 border-b border-border py-4">
@@ -60,13 +59,14 @@ function CartPage() {
           ))}
         </div>
 
-        {/* Итого */}
         <div className="lg:w-80 bg-warm-bg rounded-2xl p-6 h-fit">
           <h2 className="text-xl font-semibold mb-4">Итого</h2>
           <div className="text-2xl font-bold text-primary mb-6">{totalPrice} ₽</div>
-          <button className="w-full bg-primary text-white py-3 rounded-full hover:bg-primary-dark transition">
-            Оформить заказ
-          </button>
+          <Link to="/checkout">
+            <button className="w-full bg-primary text-white py-3 rounded-full hover:bg-primary-dark transition">
+              Оформить заказ
+            </button>
+          </Link>
           <button
             onClick={clearCart}
             className="w-full text-text-mid text-sm mt-4 hover:text-primary transition"

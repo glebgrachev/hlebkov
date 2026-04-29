@@ -50,6 +50,49 @@ function Breadcrumbs() {
     )
   }
 
+  // Страница оформления заказа
+  if (pathnames[0] === 'checkout') {
+    return (
+      <div className="container mx-auto px-4 py-4">
+        <div className="text-sm text-text-mid">
+          <Link to="/" className="hover:text-primary transition">Главная</Link>
+          <span className="mx-2">/</span>
+          <Link to="/cart" className="hover:text-primary transition">Корзина</Link>
+          <span className="mx-2">/</span>
+          <span className="text-text-dark">Оформление</span>
+        </div>
+      </div>
+    )
+  }
+
+  // Мои заказы
+  if (pathnames[0] === 'my-orders') {
+    return (
+      <div className="container mx-auto px-4 py-4">
+        <div className="text-sm text-text-mid">
+          <Link to="/" className="hover:text-primary transition">Главная</Link>
+          <span className="mx-2">/</span>
+          <span className="text-text-dark">Мои заказы</span>
+        </div>
+      </div>
+    )
+  }
+
+  // Детальный заказ
+  if (pathnames[0] === 'order' && pathnames[1]) {
+    return (
+      <div className="container mx-auto px-4 py-4">
+        <div className="text-sm text-text-mid">
+          <Link to="/" className="hover:text-primary transition">Главная</Link>
+          <span className="mx-2">/</span>
+          <Link to="/my-orders" className="hover:text-primary transition">Мои заказы</Link>
+          <span className="mx-2">/</span>
+          <span className="text-text-dark">Заказ №{pathnames[1]}</span>
+        </div>
+      </div>
+    )
+  }
+
   // Страница товара
   if (pathnames[0] === 'product') {
     return (
@@ -91,7 +134,7 @@ function Breadcrumbs() {
     )
   }
 
-  // Страница политики конфиденциальности
+  // Политика конфиденциальности
   if (pathnames[0] === 'privacy') {
     return (
       <div className="container mx-auto px-4 py-4">
@@ -104,7 +147,7 @@ function Breadcrumbs() {
     )
   }
 
-  // Страница оферты
+  // Оферта
   if (pathnames[0] === 'offer') {
     return (
       <div className="container mx-auto px-4 py-4">
