@@ -41,7 +41,7 @@ export default async function handler(req, res) {
         capture: true,
         confirmation: {
           type: 'redirect',
-          return_url: 'https://hlebkov.vercel.app/my-orders?orderId=${orderId}',
+          return_url: `https://hlebkov.vercel.app/my-orders?orderId=${orderId}`,
         },
         description: `Заказ №${orderId}`,
         metadata: { orderId: String(orderId) },
