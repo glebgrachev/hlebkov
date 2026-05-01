@@ -1,4 +1,5 @@
 export default async function handler(req, res) {
+  // Только POST запросы
   if (req.method !== 'POST') {
     return res.status(405).json({ error: 'Method not allowed' })
   }
@@ -9,7 +10,7 @@ export default async function handler(req, res) {
   }
 
   try {
-    // 1. Получаем сумму заказа из Supabase
+    // 1. Получаем сумму заказа из Supabase (поле total)
     const supabaseRes = await fetch(
       `${process.env.VITE_SUPABASE_URL}/rest/v1/orders?id=eq.${orderId}&select=total`,
       {
@@ -25,7 +26,7 @@ export default async function handler(req, res) {
       return res.status(404).json({ error: 'Order not found' })
     }
 
-    const sumToPay = orders[0].total
+    const sumToPay = orders[0].total   // total — это поле в таблице orders
 
     // 2. Создаём платеж в ЮKassa
     const ykRes = await fetch('https://api.yookassa.ru/v3/payments', {
@@ -40,7 +41,7 @@ export default async function handler(req, res) {
         capture: true,
         confirmation: {
           type: 'redirect',
-          return_url: `${req.headers.origin || 'https://hlebkov.vercel.app'}/my-orders`,
+          return_url: 'https://hlebkov.vercel.app/my-orders',
         },
         description: `Заказ №${orderId}`,
         metadata: { orderId: String(orderId) },
@@ -54,7 +55,7 @@ export default async function handler(req, res) {
       return res.status(500).json({ error: payment.description || 'YooKassa error' })
     }
 
-    // 3. Обновляем заказ (сохраняем payment_id)
+    // 3. Обновляем заказ (сохраняем payment_id и payment_status)
     await fetch(`${process.env.VITE_SUPABASE_URL}/rest/v1/orders?id=eq.${orderId}`, {
       method: 'PATCH',
       headers: {
@@ -68,6 +69,7 @@ export default async function handler(req, res) {
       }),
     })
 
+    // 4. Возвращаем ссылку на оплату
     return res.status(200).json({
       orderId,
       paymentUrl: payment.confirmation.confirmation_url,
