@@ -100,9 +100,14 @@ function MyOrdersPage() {
                   <span className={`px-3 py-1 rounded-full text-xs ${
                     order.status === 'new' ? 'bg-blue-100 text-blue-800' :
                     order.status === 'paid' ? 'bg-green-100 text-green-800' :
+                    order.status === 'cancelled' ? 'bg-red-100 text-red-800' :
                     'bg-gray-100 text-gray-800'
                   }`}>
-                    {order.status === 'new' ? 'Новый' : order.status}
+                    {order.status === 'new' ? 'Новый' : 
+                     order.status === 'paid' ? 'Оплачен' : 
+                     order.status === 'cancelled' ? 'Отменён' : 
+                     order.status === 'delivered' ? 'Доставлен' : 
+                     order.status}
                   </span>
                 </div>
               </div>
