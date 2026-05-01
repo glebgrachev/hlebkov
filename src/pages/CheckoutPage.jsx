@@ -6,7 +6,6 @@ import { supabase } from '../services/supabase'
 function CheckoutPage() {
   const { cart, totalPrice, clearCart } = useCart()
   const [loading, setLoading] = useState(false)
-  const [orderCompleted, setOrderCompleted] = useState(false)
   const [user, setUser] = useState(null)
   const [checkingAuth, setCheckingAuth] = useState(true)
   const [formData, setFormData] = useState({
@@ -17,7 +16,7 @@ function CheckoutPage() {
   })
   const navigate = useNavigate()
 
-  // Проверяем авторизацию
+  // Проверка авторизации
   useEffect(() => {
     const getUser = async () => {
       const { data: { user } } = await supabase.auth.getUser()
@@ -37,6 +36,7 @@ function CheckoutPage() {
 
   const handleSubmit = async (e) => {
     e.preventDefault()
+    
     if (cart.length === 0) {
       alert('Корзина пуста')
       return
@@ -62,29 +62,52 @@ function CheckoutPage() {
       })),
       status: 'new',
       payment_method: formData.paymentMethod,
-      user_id: user.id  // 👈 привязываем заказ к пользователю
+      user_id: user.id
     }
 
-    const { error } = await supabase.from('orders').insert([orderData])
+    try {
+      // Создаём заказ
+      const { data: order, error } = await supabase
+        .from('orders')
+        .insert([orderData])
+        .select()
+        .single()
 
-    if (error) {
-      console.error('Ошибка при создании заказа:', error)
-      alert('Ошибка при оформлении заказа. Попробуйте позже.')
-    } else {
-      clearCart()
-      setOrderCompleted(true)
-      setTimeout(() => {
-        navigate('/catalog')
-      }, 3000)
+      if (error) throw error
+
+      // Если оплата картой — создаём платёж и редиректим
+      if (formData.paymentMethod === 'card') {
+        const res = await fetch('/api/create-payment', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ orderId: order.id })
+        })
+        const { paymentUrl } = await res.json()
+        
+        if (paymentUrl) {
+          window.location.href = paymentUrl
+        } else {
+          alert('Ошибка создания платежа')
+        }
+      } else {
+        // Наличные — просто очищаем корзину и показываем успех
+        clearCart()
+        alert('Заказ оформлен! Скоро свяжемся с вами.')
+        navigate('/my-orders')
+      }
+    } catch (err) {
+      console.error('Ошибка:', err)
+      alert('Ошибка при оформлении заказа')
+    } finally {
+      setLoading(false)
     }
-    setLoading(false)
   }
 
   if (checkingAuth) {
     return <div className="container mx-auto px-4 py-16 text-center">Проверка авторизации...</div>
   }
 
-  if (cart.length === 0 && !orderCompleted) {
+  if (cart.length === 0) {
     return (
       <div className="container mx-auto px-4 py-20 text-center">
         <h1 className="text-3xl font-display font-bold mb-4">Корзина пуста</h1>
@@ -94,22 +117,6 @@ function CheckoutPage() {
           className="bg-primary text-white px-6 py-2 rounded-full hover:bg-primary-dark transition"
         >
           Перейти в каталог
-        </button>
-      </div>
-    )
-  }
-
-  if (orderCompleted) {
-    return (
-      <div className="container mx-auto px-4 py-20 text-center">
-        <div className="text-6xl mb-4">🎉</div>
-        <h1 className="text-3xl font-display font-bold mb-4">Заказ оформлен!</h1>
-        <p className="text-text-mid mb-8">Скоро свяжемся с вами для подтверждения.</p>
-        <button
-          onClick={() => navigate('/catalog')}
-          className="bg-primary text-white px-6 py-2 rounded-full hover:bg-primary-dark transition"
-        >
-          Продолжить покупки
         </button>
       </div>
     )
