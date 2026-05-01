@@ -6,7 +6,7 @@ function MainPage() {
   return (
     <>
       {/* Hero блок */}
-      <div className="container mx-auto px-4 py-20 text-center fade-in">
+      <div className="container mx-auto px-4 py-12 text-center fade-in">
         <h1 className="text-5xl font-display font-bold text-[#2D2B26] mb-4">
           Свежая выпечка на заказ
         </h1>

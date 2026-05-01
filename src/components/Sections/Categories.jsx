@@ -20,13 +20,13 @@ function Categories() {
     setLoading(false)
   }
 
-  if (loading) return <div className="py-16 text-center">Загрузка категорий...</div>
+  if (loading) return <div className="py-8 text-center">Загрузка категорий...</div>
   if (categories.length === 0) return null
 
   return (
-    <section className="py-16">
+    <section className="py-8">
       <div className="container mx-auto px-4">
-        <h2 className="text-3xl font-display font-bold text-center text-[#2D2B26] mb-12">
+        <h2 className="text-3xl font-display font-bold text-center text-[#2D2B26] mb-6">
           Что мы печём
         </h2>
         <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
