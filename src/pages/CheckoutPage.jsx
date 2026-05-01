@@ -77,17 +77,23 @@ function CheckoutPage() {
 
       // Если оплата картой — создаём платёж и редиректим
       if (formData.paymentMethod === 'card') {
+        console.log('1. Создаём платёж для заказа:', order.id)
+        
         const res = await fetch('/api/create-payment', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ orderId: order.id })
         })
-        const { paymentUrl } = await res.json()
         
-        if (paymentUrl) {
-          window.location.href = paymentUrl
+        const data = await res.json()
+        console.log('2. Ответ от API:', data)
+        
+        if (data.paymentUrl) {
+          console.log('3. Редирект на:', data.paymentUrl)
+          window.location.href = data.paymentUrl
         } else {
-          alert('Ошибка создания платежа')
+          console.error('4. paymentUrl отсутствует:', data)
+          alert('Ошибка создания платежа: ' + (data.error || 'неизвестная ошибка'))
         }
       } else {
         // Наличные — просто очищаем корзину и показываем успех
