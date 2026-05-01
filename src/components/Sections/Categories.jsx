@@ -29,7 +29,7 @@ function Categories() {
         <h2 className="text-3xl font-display font-bold text-center text-[#2D2B26] mb-6">
           Что мы печём
         </h2>
-        <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
+        <div className="grid grid-cols-2 md:grid-cols-5 gap-6">
           {categories.map((cat) => (
             <Link
               key={cat.id}
@@ -40,12 +40,12 @@ function Categories() {
                 <img 
                   src={cat.image_url} 
                   alt={cat.name} 
-                  className="w-16 h-16 object-cover rounded-full mx-auto mb-3 scale-hover"
+                  className="w-24 h-24 object-cover rounded-full mx-auto mb-4 scale-hover"
                 />
               ) : (
-                <div className="text-4xl mb-3 scale-hover">{cat.icon || '🍞'}</div>
+                <div className="text-5xl mb-3 scale-hover">{cat.icon || '🍞'}</div>
               )}
-              <h3 className="font-semibold text-[#2D2B26]">{cat.name}</h3>
+              <h3 className="font-semibold text-lg text-[#2D2B26]">{cat.name}</h3>
             </Link>
           ))}
         </div>
