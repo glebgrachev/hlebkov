@@ -1,12 +1,14 @@
 import { useEffect, useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { supabase } from '../services/supabase'
+import { useCart } from '../context/CartContext'
 
 function MyOrdersPage() {
   const [orders, setOrders] = useState([])
   const [loading, setLoading] = useState(true)
   const [user, setUser] = useState(null)
   const navigate = useNavigate()
+  const { clearCart } = useCart()
 
   const fetchOrders = async (userId) => {
     const { data, error } = await supabase
@@ -37,7 +39,7 @@ function MyOrdersPage() {
           const data = await res.json()
           if (data.status === 'succeeded') {
             // Очищаем корзину
-            localStorage.removeItem('hlebkov_cart')
+            clearCart()
             // Обновляем список заказов
             await fetchOrders(user.id)
             alert('Оплата прошла успешно! Корзина очищена.')
@@ -48,7 +50,7 @@ function MyOrdersPage() {
       }
     }
     getUserAndOrders()
-  }, [navigate])
+  }, [navigate, clearCart])
 
   if (loading) {
     return <div className="container mx-auto px-4 py-16 text-center">Загрузка ваших заказов...</div>
