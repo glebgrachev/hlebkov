@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { Link, useNavigate } from 'react-router-dom'
+import { Link, useNavigate, useLocation } from 'react-router-dom'
 import { supabase } from '../services/supabase'
 import { useCart } from '../context/CartContext'
 
@@ -7,7 +7,9 @@ function MyOrdersPage() {
   const [orders, setOrders] = useState([])
   const [loading, setLoading] = useState(true)
   const [user, setUser] = useState(null)
+  const [paymentChecked, setPaymentChecked] = useState(false)
   const navigate = useNavigate()
+  const location = useLocation()
   const { clearCart } = useCart()
 
   const fetchOrders = async (userId) => {
@@ -17,6 +19,12 @@ function MyOrdersPage() {
       .eq('user_id', userId)
       .order('created_at', { ascending: false })
     if (!error) setOrders(data || [])
+  }
+
+  // Убираем параметр orderId из URL после обработки
+  const removeOrderIdFromUrl = () => {
+    const newUrl = window.location.pathname
+    window.history.replaceState({}, '', newUrl)
   }
 
   useEffect(() => {
@@ -29,28 +37,35 @@ function MyOrdersPage() {
       setUser(user)
       await fetchOrders(user.id)
       setLoading(false)
+    }
+    getUserAndOrders()
+  }, [navigate])
 
-      // Проверка параметра orderId после возврата с оплаты
-      const urlParams = new URLSearchParams(window.location.search)
-      const orderId = urlParams.get('orderId')
-      if (orderId) {
-        try {
-          const res = await fetch(`/api/check-payment?orderId=${orderId}`)
-          const data = await res.json()
+  // Проверка оплаты (отдельный useEffect, зависит от location)
+  useEffect(() => {
+    const urlParams = new URLSearchParams(location.search)
+    const orderId = urlParams.get('orderId')
+    
+    if (orderId && user && !paymentChecked) {
+      setPaymentChecked(true)
+      
+      fetch(`/api/check-payment?orderId=${orderId}`)
+        .then(res => res.json())
+        .then(async (data) => {
           if (data.status === 'succeeded') {
-            // Очищаем корзину
             clearCart()
-            // Обновляем список заказов
             await fetchOrders(user.id)
             alert('Оплата прошла успешно! Корзина очищена.')
           }
-        } catch (err) {
+          // Убираем orderId из URL, чтобы не повторять проверку
+          removeOrderIdFromUrl()
+        })
+        .catch(err => {
           console.error('Ошибка проверки платежа:', err)
-        }
-      }
+          removeOrderIdFromUrl()
+        })
     }
-    getUserAndOrders()
-  }, [navigate, clearCart])
+  }, [location, user, paymentChecked, clearCart])
 
   if (loading) {
     return <div className="container mx-auto px-4 py-16 text-center">Загрузка ваших заказов...</div>
