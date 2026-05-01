@@ -8,6 +8,15 @@ function MyOrdersPage() {
   const [user, setUser] = useState(null)
   const navigate = useNavigate()
 
+  const fetchOrders = async (userId) => {
+    const { data, error } = await supabase
+      .from('orders')
+      .select('*')
+      .eq('user_id', userId)
+      .order('created_at', { ascending: false })
+    if (!error) setOrders(data || [])
+  }
+
   useEffect(() => {
     const getUserAndOrders = async () => {
       const { data: { user } } = await supabase.auth.getUser()
@@ -16,15 +25,27 @@ function MyOrdersPage() {
         return
       }
       setUser(user)
-
-      const { data, error } = await supabase
-        .from('orders')
-        .select('*')
-        .eq('user_id', user.id)
-        .order('created_at', { ascending: false })
-
-      if (!error) setOrders(data || [])
+      await fetchOrders(user.id)
       setLoading(false)
+
+      // Проверка параметра orderId после возврата с оплаты
+      const urlParams = new URLSearchParams(window.location.search)
+      const orderId = urlParams.get('orderId')
+      if (orderId) {
+        try {
+          const res = await fetch(`/api/check-payment?orderId=${orderId}`)
+          const data = await res.json()
+          if (data.status === 'succeeded') {
+            // Очищаем корзину
+            localStorage.removeItem('hlebkov_cart')
+            // Обновляем список заказов
+            await fetchOrders(user.id)
+            alert('Оплата прошла успешно! Корзина очищена.')
+          }
+        } catch (err) {
+          console.error('Ошибка проверки платежа:', err)
+        }
+      }
     }
     getUserAndOrders()
   }, [navigate])
