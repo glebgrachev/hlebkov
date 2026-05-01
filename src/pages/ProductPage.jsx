@@ -43,8 +43,16 @@ function ProductPage() {
       <div className="max-w-4xl mx-auto">
         <div className="flex flex-col md:flex-row gap-12">
           <div className="md:w-1/2 text-center">
-            <div className="text-9xl p-8 bg-warm-bg rounded-3xl inline-block">
-              {product.image_url || '🥖'}
+            <div className="p-8 bg-warm-bg rounded-3xl inline-block">
+              {product.image_url ? (
+                <img 
+                  src={product.image_url} 
+                  alt={product.name} 
+                  className="w-64 h-64 object-cover rounded-2xl"
+                />
+              ) : (
+                <div className="text-9xl">🥖</div>
+              )}
             </div>
           </div>
           <div className="md:w-1/2">

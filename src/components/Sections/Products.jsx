@@ -59,8 +59,16 @@ function Products() {
               className="block bg-white rounded-2xl overflow-hidden border border-[#EDE6DD] hover-lift fade-in transition"
             >
               <div className="p-6 text-center">
-                <div className="text-6xl mb-4 scale-hover inline-block">
-                  {product.image_url || '🥖'}
+                <div className="mb-4 scale-hover inline-block">
+                  {product.image_url ? (
+                    <img 
+                      src={product.image_url} 
+                      alt={product.name} 
+                      className="w-24 h-24 object-cover rounded-xl mx-auto"
+                    />
+                  ) : (
+                    <div className="text-6xl">🥖</div>
+                  )}
                 </div>
                 <h3 className="font-semibold text-lg text-[#2D2B26] mb-1">{product.name}</h3>
                 {product.weight && (

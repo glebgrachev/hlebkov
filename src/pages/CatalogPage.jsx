@@ -1,5 +1,5 @@
-import { Link } from 'react-router-dom'
 import { useEffect, useState } from 'react'
+import { Link } from 'react-router-dom'
 import { supabase } from '../services/supabase'
 import { useCart } from '../context/CartContext'
 
@@ -42,7 +42,17 @@ function CatalogPage() {
         {products.map((product) => (
           <div key={product.id} className="bg-white rounded-2xl overflow-hidden border border-border hover-lift p-6 text-center">
             <Link to={`/product/${product.id}`}>
-              <div className="text-6xl mb-4">{product.image_url || '🥖'}</div>
+              <div className="mb-4">
+                {product.image_url ? (
+                  <img 
+                    src={product.image_url} 
+                    alt={product.name} 
+                    className="w-32 h-32 object-cover rounded-xl mx-auto"
+                  />
+                ) : (
+                  <div className="text-6xl">🥖</div>
+                )}
+              </div>
               <h3 className="font-semibold text-lg mb-1 hover:text-primary">{product.name}</h3>
               <div className="text-xl font-bold mt-2">{product.price} ₽</div>
             </Link>
