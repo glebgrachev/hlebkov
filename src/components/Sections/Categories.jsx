@@ -34,7 +34,7 @@ function Categories() {
             <Link
               key={cat.id}
               to={`/category/${cat.slug}`}
-              className="bg-white rounded-2xl p-6 text-center hover-lift border border-[#EDE6DD] hover:border-[#D96E2A] group transition-all block"
+              className="block bg-white rounded-2xl p-6 text-center hover-lift transition-all"
             >
               {cat.image_url ? (
                 <img 
