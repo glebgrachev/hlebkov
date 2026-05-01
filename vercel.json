@@ -5,6 +5,10 @@
     {
       "source": "/api/(.*)",
       "destination": "/api/create-payment"
+    },
+    {
+      "source": "/(.*)",
+      "destination": "/index.html"
     }
   ]
 }
