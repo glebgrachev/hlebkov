@@ -35,17 +35,17 @@ function Header() {
 
   return (
     <header className="sticky top-0 z-50 bg-[#FDF8F0]/95 backdrop-blur-sm border-b border-[#EDE6DD]">
-      <div className="container mx-auto px-4 py-3 flex justify-between items-end">
-        <div className="flex items-end gap-3">
+      <div className="container mx-auto px-4 py-3 flex justify-between items-center">
+        <div className="flex items-center gap-3">
           <img 
             src="/android-chrome-192x192.png" 
             alt="Хлебков" 
             className="w-8 h-8 md:w-10 md:h-10"
           />
-          <Link to="/" className="text-3xl md:text-4xl font-display font-bold text-[#2D2B26] scale-hover leading-none">
+          <Link to="/" className="text-3xl md:text-4xl font-display font-bold text-[#2D2B26] scale-hover">
             Хлебков
           </Link>
-          <span className="text-[10px] md:text-xs text-text-mid tracking-wider whitespace-nowrap leading-none">
+          <span className="text-[10px] md:text-xs text-text-mid tracking-wider whitespace-nowrap -mb-1">
             с 1998 года
           </span>
         </div>
