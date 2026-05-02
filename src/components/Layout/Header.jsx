@@ -1,4 +1,4 @@
-import { Link, useNavigate } from 'react-router-dom'
+import { Link } from 'react-router-dom'
 import { useCart } from '../../context/CartContext'
 import { useEffect, useState } from 'react'
 import { supabase } from '../../services/supabase'
@@ -7,7 +7,6 @@ function Header() {
   const { totalItems } = useCart()
   const [user, setUser] = useState(null)
   const [showMenu, setShowMenu] = useState(false)
-  const navigate = useNavigate()
 
   const checkUser = async () => {
     const { data: { user } } = await supabase.auth.getUser()
@@ -17,7 +16,7 @@ function Header() {
   useEffect(() => {
     checkUser()
 
-    const { data: { subscription } } = supabase.auth.onAuthStateChange(async (_event, session) => {
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
       setUser(session?.user ?? null)
       if (!session?.user) {
         setShowMenu(false)
@@ -31,16 +30,22 @@ function Header() {
     await supabase.auth.signOut()
     setUser(null)
     setShowMenu(false)
-    navigate('/')
-    window.location.reload() // 👈 принудительно перезагружаем страницу
+    window.location.reload()
   }
 
   return (
     <header className="sticky top-0 z-50 bg-[#FDF8F0]/95 backdrop-blur-sm border-b border-[#EDE6DD]">
       <div className="container mx-auto px-4 py-4 flex justify-between items-center">
-        <Link to="/" className="text-2xl font-display font-bold text-[#2D2B26] scale-hover">
-          Хлебков
-        </Link>
+        <div className="flex items-center gap-3">
+          <img 
+            src="/android-chrome-192x192.png" 
+            alt="Хлебков" 
+            className="w-8 h-8 md:w-10 md:h-10"
+          />
+          <Link to="/" className="text-3xl md:text-4xl font-display font-bold text-[#2D2B26] scale-hover">
+            Хлебков
+          </Link>
+        </div>
         <div className="flex items-center gap-6">
           <Link to="/catalog" className="hidden md:block text-text-dark hover:text-primary transition">
             Каталог
