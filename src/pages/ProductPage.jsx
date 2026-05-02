@@ -79,8 +79,8 @@ function ProductPage() {
 
       {/* Модальное окно добавления в корзину */}
       {showCartModal && modalProduct && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
-          <div className="bg-white rounded-2xl p-8 max-w-sm mx-4 text-center shadow-2xl animate-fade-in-up">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 transition-opacity duration-300">
+          <div className="bg-white rounded-2xl p-8 max-w-sm mx-4 text-center shadow-2xl animate-fade-in">
             <div className="text-5xl mb-4">🛒</div>
             <h3 className="text-xl font-semibold mb-2">Товар добавлен!</h3>
             <p className="text-text-mid">{modalProduct.name} в корзине</p>
