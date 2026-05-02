@@ -42,14 +42,12 @@ function Header() {
             alt="Хлебков" 
             className="w-8 h-8 md:w-10 md:h-10"
           />
-          <div className="flex flex-col">
-            <Link to="/" className="text-4xl md:text-5xl font-display font-bold text-[#2D2B26] scale-hover leading-tight">
-              Хлебков
-            </Link>
-            <span className="text-[10px] md:text-xs text-text-mid tracking-wider">
-              с 1998 года
-            </span>
-          </div>
+          <Link to="/" className="text-2xl md:text-3xl font-display font-bold text-[#2D2B26] scale-hover">
+            Хлебков
+          </Link>
+          <span className="text-[10px] md:text-xs text-text-mid tracking-wider whitespace-nowrap">
+            с 1998 года
+          </span>
         </div>
         <div className="flex items-center gap-5">
           <Link to="/catalog" className="hidden md:block text-xs uppercase tracking-wider text-text-dark hover:text-primary transition">
