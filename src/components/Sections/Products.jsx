@@ -32,7 +32,7 @@ function Products() {
     setShowCartModal(true)
     setTimeout(() => {
       setShowCartModal(false)
-      setModalProduct(null)
+      setTimeout(() => setModalProduct(null), 300)
     }, 2000)
   }
 
