@@ -8,6 +8,7 @@ function MyOrdersPage() {
   const [loading, setLoading] = useState(true)
   const [user, setUser] = useState(null)
   const [paymentChecked, setPaymentChecked] = useState(false)
+  const [showSuccessModal, setShowSuccessModal] = useState(false)
   const navigate = useNavigate()
   const location = useLocation()
   const { clearCart } = useCart()
@@ -21,7 +22,6 @@ function MyOrdersPage() {
     if (!error) setOrders(data || [])
   }
 
-  // Убираем параметр orderId из URL после обработки
   const removeOrderIdFromUrl = () => {
     const newUrl = window.location.pathname
     window.history.replaceState({}, '', newUrl)
@@ -41,7 +41,6 @@ function MyOrdersPage() {
     getUserAndOrders()
   }, [navigate])
 
-  // Проверка оплаты (отдельный useEffect, зависит от location)
   useEffect(() => {
     const urlParams = new URLSearchParams(location.search)
     const orderId = urlParams.get('orderId')
@@ -55,9 +54,9 @@ function MyOrdersPage() {
           if (data.status === 'succeeded') {
             clearCart()
             await fetchOrders(user.id)
-            alert('Оплата прошла успешно! Корзина очищена.')
+            setShowSuccessModal(true)
+            setTimeout(() => setShowSuccessModal(false), 3000)
           }
-          // Убираем orderId из URL, чтобы не повторять проверку
           removeOrderIdFromUrl()
         })
         .catch(err => {
@@ -132,6 +131,17 @@ function MyOrdersPage() {
               </div>
             </div>
           ))}
+        </div>
+      )}
+
+      {/* Модальное окно успешной оплаты */}
+      {showSuccessModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
+          <div className="bg-white rounded-2xl p-8 max-w-sm mx-4 text-center shadow-2xl animate-fade-in-up">
+            <div className="text-5xl mb-4">🎉</div>
+            <h3 className="text-xl font-semibold mb-2">Заказ оплачен!</h3>
+            <p className="text-text-mid">Ожидайте доставку.</p>
+          </div>
         </div>
       )}
     </div>
