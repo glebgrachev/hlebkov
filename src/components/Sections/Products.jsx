@@ -6,8 +6,8 @@ import { useCart } from '../../context/CartContext'
 function Products() {
   const [products, setProducts] = useState([])
   const [loading, setLoading] = useState(true)
-  const [showToast, setShowToast] = useState(false)
-  const [toastProduct, setToastProduct] = useState(null)
+  const [showCartModal, setShowCartModal] = useState(false)
+  const [modalProduct, setModalProduct] = useState(null)
   const { addToCart } = useCart()
 
   useEffect(() => {
@@ -28,11 +28,11 @@ function Products() {
 
   const handleAddToCart = (product) => {
     addToCart(product)
-    setToastProduct(product)
-    setShowToast(true)
+    setModalProduct(product)
+    setShowCartModal(true)
     setTimeout(() => {
-      setShowToast(false)
-      setToastProduct(null)
+      setShowCartModal(false)
+      setModalProduct(null)
     }, 2000)
   }
 
@@ -95,11 +95,13 @@ function Products() {
         </div>
       </div>
 
-      {/* Toast уведомление */}
-      {showToast && toastProduct && (
-        <div className="fixed bottom-8 left-1/2 -translate-x-1/2 z-50 toast-notification">
-          <div className="bg-[#DEFAE6] text-[#1A4D2A] px-6 py-3 rounded-full shadow-lg text-base font-medium">
-            {toastProduct.name} добавлен в корзину
+      {/* Модальное окно добавления в корзину */}
+      {showCartModal && modalProduct && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
+          <div className="bg-white rounded-2xl p-8 max-w-sm mx-4 text-center shadow-2xl animate-fade-in-up">
+            <div className="text-5xl mb-4">🛒</div>
+            <h3 className="text-xl font-semibold mb-2">Товар добавлен!</h3>
+            <p className="text-text-mid">{modalProduct.name} в корзине</p>
           </div>
         </div>
       )}
