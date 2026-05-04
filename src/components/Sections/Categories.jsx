@@ -29,23 +29,23 @@ function Categories() {
         <h2 className="text-3xl font-display font-bold text-center text-[#2D2B26] mb-6">
           Что мы печём
         </h2>
-        <div className="grid grid-cols-2 md:grid-cols-5 gap-6">
+        <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
           {categories.map((cat) => (
             <Link
               key={cat.id}
               to={`/category/${cat.slug}`}
-              className="block bg-white rounded-2xl p-6 text-center hover-lift transition-all"
+              className="bg-white rounded-2xl p-4 text-center hover-lift border border-[#EDE6DD] hover:border-[#D96E2A] group transition-all block"
             >
               {cat.image_url ? (
                 <img 
                   src={cat.image_url} 
                   alt={cat.name} 
-                  className="w-24 h-24 object-cover rounded-full mx-auto mb-4 scale-hover"
+                  className="w-30 h-30 object-cover rounded-full mx-auto mb-3 scale-hover"
                 />
               ) : (
                 <div className="text-5xl mb-3 scale-hover">{cat.icon || '🍞'}</div>
               )}
-              <h3 className="font-semibold text-lg text-[#2D2B26]">{cat.name}</h3>
+              <h3 className="font-semibold text-base text-[#2D2B26]">{cat.name}</h3>
             </Link>
           ))}
         </div>
