@@ -53,7 +53,7 @@ function Products() {
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
           {products.map((product) => (
-            <div key={product.id} className="bg-white rounded-2xl overflow-hidden border border-[#EDE6DD] hover-lift fade-in transition">
+            <div key={product.id} className="bg-white rounded-2xl overflow-hidden border border-[#EDE6DD] hover:border-[#D96E2A] hover-lift fade-in transition">
               <Link to={`/product/${product.id}`}>
                 <div className="p-4 pb-0">
                   <div className="aspect-square overflow-hidden rounded-xl bg-warm-bg">
