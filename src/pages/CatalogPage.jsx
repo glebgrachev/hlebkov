@@ -40,28 +40,44 @@ function CatalogPage() {
       <h1 className="text-4xl font-display font-bold text-center mb-8">Весь каталог</h1>
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
         {products.map((product) => (
-          <div key={product.id} className="bg-white rounded-2xl overflow-hidden border border-border hover-lift p-6 text-center">
+          <div key={product.id} className="bg-white rounded-2xl overflow-hidden border border-border hover-lift fade-in transition">
             <Link to={`/product/${product.id}`}>
-              <div className="mb-4">
-                {product.image_url ? (
-                  <img 
-                    src={product.image_url} 
-                    alt={product.name} 
-                    className="w-32 h-32 object-cover rounded-xl mx-auto"
-                  />
-                ) : (
-                  <div className="text-6xl">🥖</div>
+              <div className="p-4 pb-0">
+                <div className="aspect-square overflow-hidden rounded-xl bg-warm-bg">
+                  {product.image_url ? (
+                    <img 
+                      src={product.image_url} 
+                      alt={product.name} 
+                      className="w-full h-full object-cover transition-transform duration-300 hover:scale-105"
+                    />
+                  ) : (
+                    <div className="w-full h-full flex items-center justify-center text-7xl bg-warm-bg">🥖</div>
+                  )}
+                </div>
+              </div>
+            </Link>
+            <div className="p-4 pt-2">
+              <Link to={`/product/${product.id}`}>
+                <h3 className="font-semibold text-lg mb-1 hover:text-primary transition line-clamp-2">
+                  {product.name}
+                </h3>
+              </Link>
+              {product.weight && (
+                <p className="text-xs text-text-mid mb-2">{product.weight}</p>
+              )}
+              <div className="flex items-center gap-2 mb-4">
+                <span className="text-xl font-bold text-text-dark">{product.price} ₽</span>
+                {product.old_price && (
+                  <span className="text-sm text-text-mid line-through">{product.old_price} ₽</span>
                 )}
               </div>
-              <h3 className="font-semibold text-lg mb-1 hover:text-primary">{product.name}</h3>
-              <div className="text-xl font-bold mt-2">{product.price} ₽</div>
-            </Link>
-            <button
-              onClick={() => handleAddToCart(product)}
-              className="w-full bg-primary text-white py-2 rounded-full mt-3 hover:bg-primary-dark transition"
-            >
-              В корзину
-            </button>
+              <button
+                onClick={() => handleAddToCart(product)}
+                className="w-full bg-primary text-white py-2 rounded-full hover:bg-primary-dark transition-all scale-hover"
+              >
+                В корзину
+              </button>
+            </div>
           </div>
         ))}
       </div>

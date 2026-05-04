@@ -42,16 +42,16 @@ function ProductPage() {
     <div className="container mx-auto px-4 py-12">
       <div className="max-w-4xl mx-auto">
         <div className="flex flex-col md:flex-row gap-12">
-          <div className="md:w-1/2 text-center">
-            <div className="p-8 bg-warm-bg rounded-3xl inline-block">
+          <div className="md:w-1/2">
+            <div className="rounded-2xl overflow-hidden bg-warm-bg">
               {product.image_url ? (
                 <img 
                   src={product.image_url} 
                   alt={product.name} 
-                  className="w-64 h-64 object-cover rounded-2xl"
+                  className="w-full h-auto object-cover"
                 />
               ) : (
-                <div className="text-9xl">🥖</div>
+                <div className="w-full aspect-square flex items-center justify-center text-9xl bg-warm-bg">🥖</div>
               )}
             </div>
           </div>
