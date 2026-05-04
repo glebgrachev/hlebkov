@@ -3,14 +3,51 @@ import { useNavigate } from 'react-router-dom'
 import { useCart } from '../context/CartContext'
 import { supabase } from '../services/supabase'
 
+// Функция для форматирования телефона
+const formatPhoneNumber = (value) => {
+  const digits = value.replace(/\D/g, '')
+  if (digits.length === 0) return '+7'
+  
+  let phone = digits
+  if (phone.startsWith('8')) {
+    phone = '7' + phone.slice(1)
+  }
+  
+  if (phone.length > 11) {
+    phone = phone.slice(0, 11)
+  }
+  
+  let formatted = '+7'
+  if (phone.length > 1) {
+    formatted += ' (' + phone.slice(1, 4)
+  }
+  if (phone.length >= 4) {
+    formatted += ') ' + phone.slice(4, 7)
+  }
+  if (phone.length >= 7) {
+    formatted += '-' + phone.slice(7, 9)
+  }
+  if (phone.length >= 9) {
+    formatted += '-' + phone.slice(9, 11)
+  }
+  return formatted
+}
+
+// Функция для капитализации имени
+const capitalizeName = (name) => {
+  if (!name) return ''
+  return name.trim().charAt(0).toUpperCase() + name.trim().slice(1).toLowerCase()
+}
+
 function CheckoutPage() {
   const { cart, totalPrice, clearCart } = useCart()
   const [loading, setLoading] = useState(false)
   const [user, setUser] = useState(null)
   const [checkingAuth, setCheckingAuth] = useState(true)
+  const [errors, setErrors] = useState({ name: '', phone: '' })
   const [formData, setFormData] = useState({
     name: '',
-    phone: '',
+    phone: '+7',
     address: '',
     paymentMethod: 'cash'
   })
@@ -31,7 +68,38 @@ function CheckoutPage() {
   }, [navigate])
 
   const handleChange = (e) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value })
+    const { name, value } = e.target
+    
+    if (name === 'phone') {
+      setFormData({ ...formData, [name]: formatPhoneNumber(value) })
+      setErrors({ ...errors, phone: '' })
+    } else if (name === 'name') {
+      setFormData({ ...formData, [name]: value })
+      setErrors({ ...errors, name: '' })
+    } else {
+      setFormData({ ...formData, [name]: value })
+    }
+  }
+
+  const validateForm = () => {
+    let isValid = true
+    const newErrors = { name: '', phone: '' }
+    
+    // Проверка имени (минимум 2 символа)
+    if (!formData.name.trim() || formData.name.trim().length < 2) {
+      newErrors.name = 'Имя должно содержать минимум 2 символа'
+      isValid = false
+    }
+    
+    // Проверка телефона (должно быть 10 цифр после +7)
+    const phoneDigits = formData.phone.replace(/\D/g, '')
+    if (phoneDigits.length !== 11 || !phoneDigits.startsWith('7')) {
+      newErrors.phone = 'Введите полный номер телефона (10 цифр)'
+      isValid = false
+    }
+    
+    setErrors(newErrors)
+    return isValid
   }
 
   const handleSubmit = async (e) => {
@@ -41,15 +109,18 @@ function CheckoutPage() {
       alert('Корзина пуста')
       return
     }
-    if (!formData.name || !formData.phone) {
-      alert('Заполните имя и телефон')
+    
+    if (!validateForm()) {
       return
     }
+    
+    // Капитализируем имя перед отправкой
+    const capitalizedName = capitalizeName(formData.name)
 
     setLoading(true)
 
     const orderData = {
-      customer_name: formData.name,
+      customer_name: capitalizedName,
       customer_phone: formData.phone,
       customer_address: formData.address || 'Самовывоз',
       total: totalPrice,
@@ -77,23 +148,17 @@ function CheckoutPage() {
 
       // Если оплата картой — создаём платёж и редиректим
       if (formData.paymentMethod === 'card') {
-        console.log('1. Создаём платёж для заказа:', order.id)
-        
         const res = await fetch('/api/create-payment', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ orderId: order.id })
         })
+        const { paymentUrl } = await res.json()
         
-        const data = await res.json()
-        console.log('2. Ответ от API:', data)
-        
-        if (data.paymentUrl) {
-          console.log('3. Редирект на:', data.paymentUrl)
-          window.location.href = data.paymentUrl
+        if (paymentUrl) {
+          window.location.href = paymentUrl
         } else {
-          console.error('4. paymentUrl отсутствует:', data)
-          alert('Ошибка создания платежа: ' + (data.error || 'неизвестная ошибка'))
+          alert('Ошибка создания платежа')
         }
       } else {
         // Наличные — просто очищаем корзину и показываем успех
@@ -116,7 +181,7 @@ function CheckoutPage() {
   if (cart.length === 0) {
     return (
       <div className="container mx-auto px-4 py-20 text-center">
-        <h1 className="text-3xl font-display font-bold mb-4">Корзина пуста</h1>
+        <h1 className="text-4xl font-display font-bold mb-4">Корзина пуста</h1>
         <p className="text-text-mid mb-8">Добавьте товары из каталога</p>
         <button
           onClick={() => navigate('/catalog')}
@@ -142,10 +207,12 @@ function CheckoutPage() {
                 name="name"
                 value={formData.name}
                 onChange={handleChange}
-                required
-                className="w-full px-4 py-2 rounded-xl border border-border bg-white focus:border-primary outline-none"
+                className={`w-full px-4 py-2 rounded-xl border ${errors.name ? 'border-red-500' : 'border-border'} bg-white focus:border-primary outline-none transition`}
                 placeholder="Иван"
               />
+              {errors.name && (
+                <p className="text-red-500 text-sm mt-1">{errors.name}</p>
+              )}
             </div>
             <div>
               <label className="block text-text-dark font-semibold mb-1">Телефон *</label>
@@ -154,10 +221,12 @@ function CheckoutPage() {
                 name="phone"
                 value={formData.phone}
                 onChange={handleChange}
-                required
-                className="w-full px-4 py-2 rounded-xl border border-border bg-white focus:border-primary outline-none"
+                className={`w-full px-4 py-2 rounded-xl border ${errors.phone ? 'border-red-500' : 'border-border'} bg-white focus:border-primary outline-none transition`}
                 placeholder="+7 (___) ___-__-__"
               />
+              {errors.phone && (
+                <p className="text-red-500 text-sm mt-1">{errors.phone}</p>
+              )}
             </div>
             <div>
               <label className="block text-text-dark font-semibold mb-1">Адрес доставки</label>
