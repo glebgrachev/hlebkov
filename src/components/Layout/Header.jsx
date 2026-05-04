@@ -50,7 +50,7 @@ function Header() {
           </span>
         </div>
         <div className="flex items-center gap-5">
-          <Link to="/catalog" className="hidden md:block text-base uppercase tracking-wider text-text-dark hover:text-primary transition">
+          <Link to="/catalog" className="hidden md:block text-sm uppercase tracking-wider text-text-dark hover:text-primary transition">
             Каталог
           </Link>
 
@@ -58,9 +58,20 @@ function Header() {
             <div className="relative">
               <button
                 onClick={() => setShowMenu(!showMenu)}
-                className="flex items-center gap-1 text-base uppercase tracking-wider text-text-dark hover:text-primary transition"
+                className="flex items-center gap-1 text-sm uppercase tracking-wider text-text-dark hover:text-primary transition"
               >
-                <span>👤</span>
+                <svg 
+                  width="16" 
+                  height="16" 
+                  viewBox="0 0 24 24" 
+                  fill="none" 
+                  stroke="currentColor" 
+                  strokeWidth="1.5"
+                  className="text-text-dark"
+                >
+                  <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" stroke="currentColor" strokeLinecap="round"/>
+                  <circle cx="12" cy="7" r="4" stroke="currentColor" strokeLinecap="round"/>
+                </svg>
                 <span className="hidden md:inline">Профиль</span>
                 <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
@@ -87,7 +98,7 @@ function Header() {
           ) : (
             <Link 
               to="/login" 
-              className="text-base uppercase tracking-wider bg-primary text-white px-3 py-1 rounded-full hover:bg-primary-dark transition"
+              className="text-sm uppercase tracking-wider bg-primary text-white px-3 py-1 rounded-full hover:bg-primary-dark transition"
             >
               Войти
             </Link>
