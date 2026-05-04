@@ -53,35 +53,37 @@ function Products() {
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
           {products.map((product) => (
-            <Link
-              key={product.id}
-              to={`/product/${product.id}`}
-              className="block bg-white rounded-2xl overflow-hidden border border-[#EDE6DD] hover-lift fade-in transition"
-            >
-              <div className="p-6 text-center">
-                <div className="mb-4 scale-hover inline-block">
+            <div key={product.id} className="bg-white rounded-2xl overflow-hidden border border-[#EDE6DD] hover-lift fade-in transition">
+              <Link to={`/product/${product.id}`}>
+                <div className="aspect-square overflow-hidden bg-warm-bg">
                   {product.image_url ? (
                     <img 
                       src={product.image_url} 
                       alt={product.name} 
-                      className="w-24 h-24 object-cover rounded-xl mx-auto"
+                      className="w-full h-full object-cover transition-transform duration-300 hover:scale-105"
                     />
                   ) : (
-                    <div className="text-6xl">🥖</div>
+                    <div className="w-full h-full flex items-center justify-center text-7xl bg-warm-bg">🥖</div>
                   )}
                 </div>
-                <h3 className="font-semibold text-lg text-[#2D2B26] mb-1">{product.name}</h3>
+              </Link>
+              <div className="p-4">
+                <Link to={`/product/${product.id}`}>
+                  <h3 className="font-semibold text-lg text-[#2D2B26] mb-1 hover:text-primary transition line-clamp-2">
+                    {product.name}
+                  </h3>
+                </Link>
                 {product.weight && (
                   <p className="text-xs text-[#6B635C] mb-2">{product.weight}</p>
                 )}
-                <div className="flex items-center justify-center gap-2 mb-4">
+                <div className="flex items-center gap-2 mb-4">
                   <span className="text-xl font-bold text-[#2D2B26]">{product.price} ₽</span>
                   {product.old_price && (
                     <span className="text-sm text-[#6B635C] line-through">{product.old_price} ₽</span>
                   )}
                 </div>
                 <button 
-                  className="w-full bg-[#D96E2A] text-white py-2 rounded-full hover:bg-[#B8531E] transition-all scale-hover"
+                  className="w-full bg-primary text-white py-2 rounded-full hover:bg-primary-dark transition-all scale-hover"
                   onClick={(e) => {
                     e.preventDefault()
                     handleAddToCart(product)
@@ -90,7 +92,7 @@ function Products() {
                   В корзину
                 </button>
               </div>
-            </Link>
+            </div>
           ))}
         </div>
       </div>
