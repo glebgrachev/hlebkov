@@ -26,7 +26,7 @@ function Categories() {
   return (
     <section className="py-16">
       <div className="container mx-auto px-4">
-        <h2 className="text-3xl font-display font-bold text-center text-[#2D2B26] mb-12">
+        <h2 className="text-4xl font-display font-bold text-center text-[#2D2B26] mb-12">
           Что мы печём
         </h2>
         <div className="grid grid-cols-2 md:grid-cols-5 gap-6">

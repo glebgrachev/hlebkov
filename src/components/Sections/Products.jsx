@@ -40,10 +40,10 @@ function Products() {
   if (products.length === 0) return null
 
   return (
-    <section className="py-8">
+    <section className="py-16">
       <div className="container mx-auto px-4">
-        <div className="text-center mb-6">
-          <h2 className="text-3xl font-display font-bold text-[#2D2B26] mb-2">
+        <div className="text-center mb-12">
+          <h2 className="text-4xl font-display font-bold text-[#2D2B26] mb-2">
             Популярное сегодня
           </h2>
           <p className="text-[#6B635C]">
