@@ -18,7 +18,7 @@ function CartPage() {
 
   return (
     <div className="container mx-auto px-4 py-12">
-      <h1 className="text-3xl font-display font-bold mb-8">Корзина</h1>
+      <h1 className="text-4xl font-display font-bold mb-8">Корзина</h1>
 
       <div className="flex flex-col lg:flex-row gap-8">
         {/* Список товаров */}

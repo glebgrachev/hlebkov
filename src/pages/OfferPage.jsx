@@ -31,7 +31,7 @@ function OfferPage() {
   return (
     <div className="container mx-auto px-4 py-12">
       <div className="max-w-3xl mx-auto">
-        <h1 className="text-3xl font-display font-bold text-text-dark mb-6">
+        <h1 className="text-4xl font-display font-bold text-text-dark mb-6">
           Договор оферты
         </h1>
         <div className="text-text-mid whitespace-pre-line leading-relaxed">

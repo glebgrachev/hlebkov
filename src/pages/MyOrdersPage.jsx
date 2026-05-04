@@ -74,7 +74,7 @@ function MyOrdersPage() {
 
   return (
     <div className="container mx-auto px-4 py-12">
-      <h1 className="text-3xl font-display font-bold mb-2">Мои заказы</h1>
+      <h1 className="text-4xl font-display font-bold mb-2">Мои заказы</h1>
       <p className="text-text-mid mb-8">Здесь вы можете отслеживать статус ваших заказов</p>
 
       {orders.length === 0 ? (
