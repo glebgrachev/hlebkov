@@ -42,7 +42,7 @@ function Header() {
             alt="Хлебков" 
             className="w-8 h-8 md:w-10 md:h-10"
           />
-          <Link to="/" className="text-3xl md:text-4xl font-display font-bold text-[#2D2B26] scale-hover">
+          <Link to="/" className="text-2xl md:text-3xl font-display font-bold text-[#2D2B26] scale-hover">
             Хлебков
           </Link>
           <span className="text-[10px] md:text-xs text-text-mid tracking-wider whitespace-nowrap -mb-1">
@@ -50,7 +50,7 @@ function Header() {
           </span>
         </div>
         <div className="flex items-center gap-5">
-          <Link to="/catalog" className="hidden md:block text-xs uppercase tracking-wider text-text-dark hover:text-primary transition">
+          <Link to="/catalog" className="hidden md:block text-base uppercase tracking-wider text-text-dark hover:text-primary transition">
             Каталог
           </Link>
 
@@ -58,7 +58,7 @@ function Header() {
             <div className="relative">
               <button
                 onClick={() => setShowMenu(!showMenu)}
-                className="flex items-center gap-1 text-xs uppercase tracking-wider text-text-dark hover:text-primary transition"
+                className="flex items-center gap-1 text-base uppercase tracking-wider text-text-dark hover:text-primary transition"
               >
                 <span>👤</span>
                 <span className="hidden md:inline">Профиль</span>
@@ -71,13 +71,13 @@ function Header() {
                   <Link
                     to="/my-orders"
                     onClick={() => setShowMenu(false)}
-                    className="block px-3 py-2 text-xs text-text-dark hover:bg-gray-50 transition"
+                    className="block px-4 py-2 text-base text-text-dark hover:bg-gray-50 transition"
                   >
                     Мои заказы
                   </Link>
                   <button
                     onClick={handleLogout}
-                    className="block w-full text-left px-3 py-2 text-xs text-red-500 hover:bg-gray-50 transition"
+                    className="block w-full text-left px-4 py-2 text-base text-red-500 hover:bg-gray-50 transition"
                   >
                     Выйти
                   </button>
@@ -87,7 +87,7 @@ function Header() {
           ) : (
             <Link 
               to="/login" 
-              className="text-xs uppercase tracking-wider bg-primary text-white px-3 py-1 rounded-full hover:bg-primary-dark transition"
+              className="text-base uppercase tracking-wider bg-primary text-white px-3 py-1 rounded-full hover:bg-primary-dark transition"
             >
               Войти
             </Link>
