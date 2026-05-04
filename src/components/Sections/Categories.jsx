@@ -45,7 +45,7 @@ function Categories() {
               ) : (
                 <div className="text-5xl mb-3 scale-hover">{cat.icon || '🍞'}</div>
               )}
-              <h3 className="font-semibold text-base text-[#2D2B26]">{cat.name}</h3>
+              <h3 className="font-semibold text-lg text-[#2D2B26]">{cat.name}</h3>
             </Link>
           ))}
         </div>
