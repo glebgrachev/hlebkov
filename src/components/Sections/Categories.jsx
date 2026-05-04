@@ -24,28 +24,28 @@ function Categories() {
   if (categories.length === 0) return null
 
   return (
-    <section className="py-8">
+    <section className="py-16">
       <div className="container mx-auto px-4">
-        <h2 className="text-3xl font-display font-bold text-center text-[#2D2B26] mb-6">
+        <h2 className="text-3xl font-display font-bold text-center text-[#2D2B26] mb-12">
           Что мы печём
         </h2>
-        <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
+        <div className="grid grid-cols-2 md:grid-cols-5 gap-6">
           {categories.map((cat) => (
             <Link
               key={cat.id}
               to={`/category/${cat.slug}`}
-              className="bg-white rounded-2xl p-4 text-center hover-lift border border-[#EDE6DD] hover:border-[#D96E2A] group transition-all block"
+              className="bg-white rounded-2xl p-6 text-center hover-lift border border-[#EDE6DD] hover:border-[#D96E2A] group transition-all block"
             >
               {cat.image_url ? (
                 <img 
                   src={cat.image_url} 
                   alt={cat.name} 
-                  className="w-30 h-30 object-cover rounded-full mx-auto mb-3 scale-hover"
+                  className="w-32 h-32 object-cover rounded-full mx-auto mb-4 scale-hover"
                 />
               ) : (
                 <div className="text-5xl mb-3 scale-hover">{cat.icon || '🍞'}</div>
               )}
-              <h3 className="font-semibold text-lg text-[#2D2B26]">{cat.name}</h3>
+              <h3 className="font-semibold text-2xl text-[#2D2B26]">{cat.name}</h3>
             </Link>
           ))}
         </div>
