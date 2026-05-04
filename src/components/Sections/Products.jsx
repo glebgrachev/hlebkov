@@ -55,19 +55,21 @@ function Products() {
           {products.map((product) => (
             <div key={product.id} className="bg-white rounded-2xl overflow-hidden border border-[#EDE6DD] hover-lift fade-in transition">
               <Link to={`/product/${product.id}`}>
-                <div className="aspect-square overflow-hidden bg-warm-bg">
-                  {product.image_url ? (
-                    <img 
-                      src={product.image_url} 
-                      alt={product.name} 
-                      className="w-full h-full object-cover transition-transform duration-300 hover:scale-105"
-                    />
-                  ) : (
-                    <div className="w-full h-full flex items-center justify-center text-7xl bg-warm-bg">🥖</div>
-                  )}
+                <div className="p-4 pb-0">
+                  <div className="aspect-square overflow-hidden rounded-xl bg-warm-bg">
+                    {product.image_url ? (
+                      <img 
+                        src={product.image_url} 
+                        alt={product.name} 
+                        className="w-full h-full object-cover transition-transform duration-300 hover:scale-105"
+                      />
+                    ) : (
+                      <div className="w-full h-full flex items-center justify-center text-7xl bg-warm-bg">🥖</div>
+                    )}
+                  </div>
                 </div>
               </Link>
-              <div className="p-4">
+              <div className="p-4 pt-2">
                 <Link to={`/product/${product.id}`}>
                   <h3 className="font-semibold text-lg text-[#2D2B26] mb-1 hover:text-primary transition line-clamp-2">
                     {product.name}
