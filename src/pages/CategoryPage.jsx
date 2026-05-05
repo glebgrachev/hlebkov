@@ -69,7 +69,7 @@ function CategoryPage() {
     <div className="container mx-auto px-4 py-12">
       <h1 className="text-4xl font-display font-bold text-center mb-2">{category.name}</h1>
       <p className="text-center text-text-mid mb-8">
-        {products.length} товаров
+        {products.length} {products.length === 1 ? 'товар' : products.length < 5 ? 'товара' : 'товаров'}
       </p>
 
       {products.length === 0 ? (
