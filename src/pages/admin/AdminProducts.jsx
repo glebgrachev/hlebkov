@@ -121,7 +121,9 @@ function AdminProducts() {
   return (
     <div className="p-6">
       <div className="flex justify-between items-center mb-6">
-        <h1 className="text-3xl font-bold font-sans text-text-dark">Товары</h1>
+        <div style={{ fontFamily: 'Inter, sans-serif' }} className="text-3xl font-bold text-text-dark">
+          Товары
+        </div>
         <button
           onClick={() => {
             setEditingProduct(null)
@@ -149,7 +151,7 @@ function AdminProducts() {
               <th className="text-left py-3 px-3">Популярный</th>
               <th className="text-left py-3 px-3">Активен</th>
               <th className="text-left py-3 px-3"></th>
-            <tr>
+            </tr>
           </thead>
           <tbody>
             {products.map((product) => (
@@ -179,7 +181,7 @@ function AdminProducts() {
                     🗑️
                   </button>
                 </td>
-              </table>
+              </tr>
             ))}
           </tbody>
         </table>
