@@ -30,7 +30,7 @@ function AdminLayout() {
               className="w-8 h-8 md:w-10 md:h-10"
             />
             <div>
-              <div className="text-xl font-display font-bold text-primary">Хлебков</div>
+              <div className="text-2xl font-display font-bold text-primary">Хлебков</div>
               <div className="text-[10px] text-text-mid tracking-wider">Управление магазином</div>
             </div>
           </div>
