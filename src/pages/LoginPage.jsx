@@ -32,21 +32,22 @@ function LoginPage() {
       const { data: { user } } = await supabase.auth.getUser()
       console.log('2. User:', user)
       
-      const { data: profile } = await supabase
+      const { data: profile, error: profileError } = await supabase
         .from('profiles')
         .select('role')
         .eq('id', user.id)
-        .single()
+        .maybeSingle()
       
       console.log('3. Profile:', profile)
-      console.log('4. Role:', profile?.role)
-      console.log('5. Is admin?', profile?.role === 'admin')
+      console.log('4. Profile error:', profileError)
+      console.log('5. Role:', profile?.role)
+      console.log('6. Is admin?', profile?.role === 'admin')
 
       if (profile?.role === 'admin') {
-        console.log('6. Редирект на /admin/products')
+        console.log('7. Редирект на /admin/products')
         navigate('/admin/products')
       } else {
-        console.log('6. Редирект на', redirectTo)
+        console.log('7. Редирект на', redirectTo)
         navigate(redirectTo)
       }
     }
