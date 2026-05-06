@@ -121,7 +121,7 @@ function AdminProducts() {
   return (
     <div className="p-6">
       <div className="flex justify-between items-center mb-6">
-        <h1 className="text-3xl font-bold text-text-dark">Товары</h1>
+        <h1 className="text-3xl font-bold font-sans text-text-dark">Товары</h1>
         <button
           onClick={() => {
             setEditingProduct(null)
@@ -149,7 +149,7 @@ function AdminProducts() {
               <th className="text-left py-3 px-3">Популярный</th>
               <th className="text-left py-3 px-3">Активен</th>
               <th className="text-left py-3 px-3"></th>
-            </tr>
+            <tr>
           </thead>
           <tbody>
             {products.map((product) => (
@@ -179,7 +179,7 @@ function AdminProducts() {
                     🗑️
                   </button>
                 </td>
-              </tr>
+              </table>
             ))}
           </tbody>
         </table>
@@ -218,7 +218,7 @@ function AdminProducts() {
                 />
                 <input
                   type="text"
-                  placeholder="URL фото"
+                  placeholder="URL фото (Supabase Storage)"
                   value={formData.image_url}
                   onChange={e => setFormData({...formData, image_url: e.target.value})}
                   className="w-full p-2 border border-border rounded-lg focus:outline-none focus:border-primary"
