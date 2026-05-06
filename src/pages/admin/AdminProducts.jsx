@@ -98,22 +98,41 @@ function AdminProducts() {
 
   const handleSubmit = async (e) => {
     e.preventDefault()
+    
+    const price = parseInt(formData.price)
+    const oldPrice = formData.old_price ? parseInt(formData.old_price) : null
+    const categoryId = formData.category_id ? parseInt(formData.category_id) : null
+    
+    if (isNaN(price)) {
+      alert('Цена должна быть числом')
+      return
+    }
+    
     const payload = {
       name: formData.name,
-      price: parseInt(formData.price),
+      price: price,
       description: formData.description || null,
       weight: formData.weight || null,
-      category_id: formData.category_id ? parseInt(formData.category_id) : null,
+      category_id: categoryId,
       image_url: formData.image_url || null,
       is_popular: formData.is_popular,
       is_active: formData.is_active,
-      old_price: formData.old_price ? parseInt(formData.old_price) : null
+      old_price: oldPrice
     }
 
+    console.log('Payload:', payload)
+
     if (editingProduct) {
-      await supabase.from('products').update(payload).eq('id', editingProduct.id)
+      const { error } = await supabase
+        .from('products')
+        .update(payload)
+        .eq('id', editingProduct.id)
+      if (error) console.error('Update error:', error)
     } else {
-      await supabase.from('products').insert([payload])
+      const { error } = await supabase
+        .from('products')
+        .insert([payload])
+      if (error) console.error('Insert error:', error)
     }
     setShowModal(false)
     setEditingProduct(null)
@@ -165,7 +184,7 @@ function AdminProducts() {
               <th className="text-left py-3 px-3">Популярный</th>
               <th className="text-left py-3 px-3">Активен</th>
               <th className="text-left py-3 px-3"></th>
-            </tr>
+            </table>
           </thead>
           <tbody>
             {products.map((product) => (
