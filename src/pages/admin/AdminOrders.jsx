@@ -53,13 +53,15 @@ function AdminOrders() {
   if (loading) return <div className="p-6 text-center">Загрузка заказов...</div>
 
   return (
-    <div className="p-6">
-      <div className="flex justify-between items-center mb-6">
-        <h1 className="text-3xl font-display font-bold">Заказы</h1>
+    <div className="h-full flex flex-col p-6">
+      <div className="flex justify-between items-center mb-6 flex-shrink-0">
+        <div style={{ fontFamily: 'Inter, sans-serif' }} className="text-3xl font-bold text-text-dark">
+          Заказы
+        </div>
       </div>
 
-      {/* Фильтры */}
-      <div className="flex flex-wrap gap-4 mb-6">
+      {/* Фильтры — тоже зафиксированы */}
+      <div className="flex flex-wrap gap-4 mb-6 flex-shrink-0">
         <div className="flex gap-2">
           {['all', 'new', 'paid', 'delivered', 'cancelled'].map((status) => (
             <button
@@ -84,60 +86,62 @@ function AdminOrders() {
         />
       </div>
 
-      {/* Таблица заказов */}
-      <div className="overflow-x-auto">
-        <table className="w-full border-collapse">
-          <thead>
-            <tr className="border-b border-border">
-              <th className="text-left py-3 px-3">№</th>
-              <th className="text-left py-3 px-3">Дата</th>
-              <th className="text-left py-3 px-3">Имя</th>
-              <th className="text-left py-3 px-3">Телефон</th>
-              <th className="text-left py-3 px-3">Сумма</th>
-              <th className="text-left py-3 px-3">Статус</th>
-              <th className="text-left py-3 px-3">Действия</th>
-            </tr>
-          </thead>
-          <tbody>
-            {filteredOrders.length === 0 ? (
-              <tr>
-                <td colSpan="7" className="text-center py-8 text-text-mid">
-                  Заказов не найдено
-                </td>
+      {/* Таблица заказов с фиксированной шапкой */}
+      <div className="border border-border rounded-lg flex flex-col flex-1 overflow-hidden">
+        <div className="overflow-x-auto flex-1">
+          <table className="w-full border-collapse">
+            <thead className="bg-warm-bg sticky top-0 z-10">
+              <tr className="border-b border-border">
+                <th className="text-left py-3 px-3">№</th>
+                <th className="text-left py-3 px-3">Дата</th>
+                <th className="text-left py-3 px-3">Имя</th>
+                <th className="text-left py-3 px-3">Телефон</th>
+                <th className="text-left py-3 px-3">Сумма</th>
+                <th className="text-left py-3 px-3">Статус</th>
+                <th className="text-left py-3 px-3">Действия</th>
               </tr>
-            ) : (
-              filteredOrders.map((order) => {
-                const { className, label } = getStatusBadge(order.status)
-                return (
-                  <tr key={order.id} className="border-b border-border hover:bg-warm-bg">
-                    <td className="py-3 px-3">{order.id}</td>
-                    <td className="py-3 px-3">{new Date(order.created_at).toLocaleDateString()}</td>
-                    <td className="py-3 px-3">{order.customer_name}</td>
-                    <td className="py-3 px-3">{order.customer_phone}</td>
-                    <td className="py-3 px-3">{order.total} ₽</td>
-                    <td className="py-3 px-3">
-                      <span className={`px-2 py-1 rounded-full text-xs ${className}`}>
-                        {label}
-                      </span>
-                    </td>
-                    <td className="py-3 px-3">
-                      <select
-                        value={order.status}
-                        onChange={(e) => updateOrderStatus(order.id, e.target.value)}
-                        className="text-sm border border-border rounded px-2 py-1 focus:outline-none focus:border-primary"
-                      >
-                        <option value="new">Новый</option>
-                        <option value="paid">Оплачен</option>
-                        <option value="delivered">Доставлен</option>
-                        <option value="cancelled">Отменён</option>
-                      </select>
-                    </td>
-                  </tr>
-                )
-              })
-            )}
-          </tbody>
-        </table>
+            </thead>
+            <tbody>
+              {filteredOrders.length === 0 ? (
+                <tr>
+                  <td colSpan="7" className="text-center py-8 text-text-mid">
+                    Заказов не найдено
+                  </td>
+                </tr>
+              ) : (
+                filteredOrders.map((order) => {
+                  const { className, label } = getStatusBadge(order.status)
+                  return (
+                    <tr key={order.id} className="border-b border-border hover:bg-warm-bg">
+                      <td className="py-3 px-3">{order.id}</td>
+                      <td className="py-3 px-3">{new Date(order.created_at).toLocaleDateString()}</td>
+                      <td className="py-3 px-3">{order.customer_name}</td>
+                      <td className="py-3 px-3">{order.customer_phone}</td>
+                      <td className="py-3 px-3">{order.total} ₽</td>
+                      <td className="py-3 px-3">
+                        <span className={`px-2 py-1 rounded-full text-xs ${className}`}>
+                          {label}
+                        </span>
+                      </td>
+                      <td className="py-3 px-3">
+                        <select
+                          value={order.status}
+                          onChange={(e) => updateOrderStatus(order.id, e.target.value)}
+                          className="text-sm border border-border rounded px-2 py-1 focus:outline-none focus:border-primary"
+                        >
+                          <option value="new">Новый</option>
+                          <option value="paid">Оплачен</option>
+                          <option value="delivered">Доставлен</option>
+                          <option value="cancelled">Отменён</option>
+                        </select>
+                      </td>
+                    </tr>
+                  )
+                })
+              )}
+            </tbody>
+           </table>
+        </div>
       </div>
     </div>
   )

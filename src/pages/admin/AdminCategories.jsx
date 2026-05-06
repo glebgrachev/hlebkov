@@ -69,9 +69,11 @@ function AdminCategories() {
   if (loading) return <div className="p-6 text-center">Загрузка категорий...</div>
 
   return (
-    <div className="p-6">
-      <div className="flex justify-between items-center mb-6">
-        <h1 className="text-3xl font-display font-bold">Категории</h1>
+    <div className="h-full flex flex-col p-6">
+      <div className="flex justify-between items-center mb-6 flex-shrink-0">
+        <div style={{ fontFamily: 'Inter, sans-serif' }} className="text-3xl font-bold text-text-dark">
+          Категории
+        </div>
         <button
           onClick={() => {
             setEditingCategory(null)
@@ -84,49 +86,50 @@ function AdminCategories() {
         </button>
       </div>
 
-      <div className="overflow-x-auto">
-        <table className="w-full border-collapse">
-          <thead>
-            <tr className="border-b border-border">
-              <th className="text-left py-3 px-3">ID</th>
-              <th className="text-left py-3 px-3">Иконка</th>
-              <th className="text-left py-3 px-3">Название</th>
-              <th className="text-left py-3 px-3">Slug</th>
-              <th className="text-left py-3 px-3">Порядок</th>
-              <th className="text-left py-3 px-3"></th>
-             </tr>
-          </thead>
-          <tbody>
-            {categories.length === 0 ? (
-              <tr>
-                <td colSpan="6" className="text-center py-8 text-text-mid">
-                  Категорий нет
-                </td>
+      <div className="border border-border rounded-lg flex flex-col flex-1 overflow-hidden">
+        <div className="overflow-x-auto flex-1">
+          <table className="w-full border-collapse">
+            <thead className="bg-warm-bg sticky top-0 z-10">
+              <tr className="border-b border-border">
+                <th className="text-left py-3 px-3">ID</th>
+                <th className="text-left py-3 px-3">Иконка</th>
+                <th className="text-left py-3 px-3">Название</th>
+                <th className="text-left py-3 px-3">Slug</th>
+                <th className="text-left py-3 px-3">Порядок</th>
+                <th className="text-left py-3 px-3"></th>
               </tr>
-            ) : (
-              categories.map((cat) => (
-                <tr key={cat.id} className="border-b border-border hover:bg-warm-bg">
-                  <td className="py-3 px-3">{cat.id}</td>
-                  <td className="py-3 px-3 text-2xl">{cat.icon || '📁'}</td>
-                  <td className="py-3 px-3">{cat.name}</td>
-                  <td className="py-3 px-3 text-text-mid text-sm">{cat.slug}</td>
-                  <td className="py-3 px-3">{cat.sort_order}</td>
-                  <td className="py-3 px-3">
-                    <button onClick={() => handleEdit(cat)} className="text-primary mr-3 hover:opacity-70 transition">
-                      ✏️
-                    </button>
-                    <button onClick={() => handleDelete(cat.id)} className="text-red-500 hover:opacity-70 transition">
-                      🗑️
-                    </button>
+            </thead>
+            <tbody>
+              {categories.length === 0 ? (
+                <tr>
+                  <td colSpan="6" className="text-center py-8 text-text-mid">
+                    Категорий нет
                   </td>
                 </tr>
-              ))
-            )}
-          </tbody>
-        </table>
+              ) : (
+                categories.map((cat) => (
+                  <tr key={cat.id} className="border-b border-border hover:bg-warm-bg">
+                    <td className="py-3 px-3">{cat.id}</td>
+                    <td className="py-3 px-3 text-2xl">{cat.icon || '📁'}</td>
+                    <td className="py-3 px-3">{cat.name}</td>
+                    <td className="py-3 px-3 text-text-mid text-sm">{cat.slug}</td>
+                    <td className="py-3 px-3">{cat.sort_order}</td>
+                    <td className="py-3 px-3">
+                      <button onClick={() => handleEdit(cat)} className="text-primary mr-3 hover:opacity-70 transition">
+                        ✏️
+                      </button>
+                      <button onClick={() => handleDelete(cat.id)} className="text-red-500 hover:opacity-70 transition">
+                        🗑️
+                      </button>
+                    </td>
+                  </tr>
+                ))
+              )}
+            </tbody>
+          </table>
+        </div>
       </div>
 
-      {/* Модальное окно добавления/редактирования */}
       {showModal && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
           <div className="bg-white rounded-2xl max-w-md w-full max-h-[90vh] overflow-y-auto">
