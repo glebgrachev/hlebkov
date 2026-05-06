@@ -17,6 +17,7 @@ import NotFoundPage from './pages/NotFoundPage'
 import AdminLayout from './pages/admin/AdminLayout'
 import AdminProducts from './pages/admin/AdminProducts'
 import AdminOrders from './pages/admin/AdminOrders'
+import AdminCategories from './pages/admin/AdminCategories'
 
 function App() {
   return (
@@ -41,7 +42,7 @@ function App() {
           <Route path="/admin" element={<AdminLayout />}>
             <Route path="products" element={<AdminProducts />} />
             <Route path="orders" element={<AdminOrders />} />
-            <Route path="categories" element={<div className="p-6">Категории (скоро)</div>} />
+            <Route path="categories" element={<AdminCategories />} />
           </Route>
           
           <Route path="*" element={<NotFoundPage />} />
