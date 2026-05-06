@@ -123,7 +123,7 @@ function AdminProducts() {
   return (
     <div className="p-6">
       <div className="flex justify-between items-center mb-6">
-        <h1 className="text-3xl font-display font-bold">Управление товарами</h1>
+        <h1 className="text-4xl font-display font-bold">Товары</h1>
         <button
           onClick={() => {
             setEditingProduct(null)
