@@ -165,7 +165,7 @@ function AdminProducts() {
               <th className="text-left py-3 px-3">Популярный</th>
               <th className="text-left py-3 px-3">Активен</th>
               <th className="text-left py-3 px-3"></th>
-            </table>
+            </tr>
           </thead>
           <tbody>
             {products.map((product) => (
@@ -186,7 +186,7 @@ function AdminProducts() {
                 <td className="py-3 px-3">{product.price} ₽</td>
                 <td className="py-3 px-3">{product.categories?.name || '-'}</td>
                 <td className="py-3 px-3 text-center">{product.is_popular ? '✅' : ''}</td>
-                <td className="py-3 px-3 text-center">{product.is_active ? '✅' : '❌'}</td>
+                <td className="py-3 px-3 text-center">{product.is_active ? '✅' : '❌'}<td>
                 <td className="py-3 px-3">
                   <button onClick={() => handleEdit(product)} className="text-primary mr-3 hover:opacity-70 transition">
                     ✏️
@@ -250,9 +250,9 @@ function AdminProducts() {
                     />
                   </label>
                 </div>
-                {uploadingImage && <p className="text-sm text-text-mid">Загрузка фото...</p>}
+                {uploadingImage && <p className="text-sm text-text-mid text-center">Загрузка фото...</p>}
                 {formData.image_url && !uploadingImage && (
-                  <div className="mt-2">
+                  <div className="mt-2 flex justify-center">
                     <img src={formData.image_url} alt="preview" className="w-20 h-20 object-cover rounded" />
                   </div>
                 )}
