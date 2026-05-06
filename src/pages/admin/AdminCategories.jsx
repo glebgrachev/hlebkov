@@ -15,15 +15,36 @@ function AdminCategories() {
   })
 
   useEffect(() => {
-    fetchCategories()
+    fetchCategoriesWithCount()
   }, [])
 
-  const fetchCategories = async () => {
-    const { data } = await supabase
+  const fetchCategoriesWithCount = async () => {
+    // Получаем категории
+    const { data: categoriesData } = await supabase
       .from('categories')
       .select('*')
       .order('sort_order')
-    setCategories(data || [])
+    
+    if (!categoriesData) {
+      setCategories([])
+      setLoading(false)
+      return
+    }
+
+    // Получаем количество товаров в каждой категории
+    const categoriesWithCount = await Promise.all(
+      categoriesData.map(async (cat) => {
+        const { count } = await supabase
+          .from('products')
+          .select('*', { count: 'exact', head: true })
+          .eq('category_id', cat.id)
+          .eq('is_active', true)
+        
+        return { ...cat, products_count: count || 0 }
+      })
+    )
+    
+    setCategories(categoriesWithCount)
     setLoading(false)
   }
 
@@ -42,7 +63,7 @@ function AdminCategories() {
   const handleDelete = async (id) => {
     if (confirm('Удалить категорию? Товары в ней останутся без категории.')) {
       await supabase.from('categories').delete().eq('id', id)
-      fetchCategories()
+      fetchCategoriesWithCount()
     }
   }
 
@@ -63,7 +84,7 @@ function AdminCategories() {
     }
     setShowModal(false)
     setEditingCategory(null)
-    fetchCategories()
+    fetchCategoriesWithCount()
   }
 
   if (loading) return <div className="p-6 text-center">Загрузка категорий...</div>
@@ -92,17 +113,16 @@ function AdminCategories() {
             <thead className="bg-warm-bg sticky top-0 z-10">
               <tr className="border-b border-border">
                 <th className="text-left py-3 px-3">ID</th>
-                <th className="text-left py-3 px-3">Иконка</th>
+                <th className="text-left py-3 px-3">Фото</th>
                 <th className="text-left py-3 px-3">Название</th>
-                <th className="text-left py-3 px-3">Slug</th>
-                <th className="text-left py-3 px-3">Порядок</th>
+                <th className="text-left py-3 px-3">Товаров</th>
                 <th className="text-left py-3 px-3"></th>
               </tr>
             </thead>
             <tbody>
               {categories.length === 0 ? (
                 <tr>
-                  <td colSpan="6" className="text-center py-8 text-text-mid">
+                  <td colSpan="5" className="text-center py-8 text-text-mid">
                     Категорий нет
                   </td>
                 </tr>
@@ -110,10 +130,19 @@ function AdminCategories() {
                 categories.map((cat) => (
                   <tr key={cat.id} className="border-b border-border hover:bg-warm-bg">
                     <td className="py-3 px-3">{cat.id}</td>
-                    <td className="py-3 px-3 text-2xl">{cat.icon || '📁'}</td>
+                    <td className="py-3 px-3">
+                      {cat.image_url ? (
+                        <img 
+                          src={cat.image_url} 
+                          alt={cat.name} 
+                          className="w-10 h-10 object-cover rounded"
+                        />
+                      ) : (
+                        <div className="w-10 h-10 bg-gray-200 rounded flex items-center justify-center text-xl">📁</div>
+                      )}
+                    </td>
                     <td className="py-3 px-3">{cat.name}</td>
-                    <td className="py-3 px-3 text-text-mid text-sm">{cat.slug}</td>
-                    <td className="py-3 px-3">{cat.sort_order}</td>
+                    <td className="py-3 px-3">{cat.products_count}</td>
                     <td className="py-3 px-3">
                       <button onClick={() => handleEdit(cat)} className="text-primary mr-3 hover:opacity-70 transition">
                         ✏️
@@ -122,7 +151,7 @@ function AdminCategories() {
                         🗑️
                       </button>
                     </td>
-                  </tr>
+                  </td>
                 ))
               )}
             </tbody>
@@ -155,14 +184,14 @@ function AdminCategories() {
                 />
                 <input
                   type="text"
-                  placeholder="Иконка (эмодзи или URL)"
+                  placeholder="Иконка (эмодзи) опционально"
                   value={formData.icon}
                   onChange={e => setFormData({ ...formData, icon: e.target.value })}
                   className="w-full p-2 border border-border rounded-lg focus:outline-none focus:border-primary"
                 />
                 <input
                   type="text"
-                  placeholder="URL фото (опционально)"
+                  placeholder="URL фото"
                   value={formData.image_url}
                   onChange={e => setFormData({ ...formData, image_url: e.target.value })}
                   className="w-full p-2 border border-border rounded-lg focus:outline-none focus:border-primary"
