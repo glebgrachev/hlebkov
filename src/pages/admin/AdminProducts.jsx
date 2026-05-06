@@ -186,7 +186,7 @@ function AdminProducts() {
                 <td className="py-3 px-3">{product.price} ₽</td>
                 <td className="py-3 px-3">{product.categories?.name || '-'}</td>
                 <td className="py-3 px-3 text-center">{product.is_popular ? '✅' : ''}</td>
-                <td className="py-3 px-3 text-center">{product.is_active ? '✅' : '❌'}<td>
+                <td className="py-3 px-3 text-center">{product.is_active ? '✅' : '❌'}</td>
                 <td className="py-3 px-3">
                   <button onClick={() => handleEdit(product)} className="text-primary mr-3 hover:opacity-70 transition">
                     ✏️
