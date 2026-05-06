@@ -19,7 +19,6 @@ function AdminCategories() {
   }, [])
 
   const fetchCategoriesWithCount = async () => {
-    // Получаем категории
     const { data: categoriesData } = await supabase
       .from('categories')
       .select('*')
@@ -31,7 +30,6 @@ function AdminCategories() {
       return
     }
 
-    // Получаем количество товаров в каждой категории
     const categoriesWithCount = await Promise.all(
       categoriesData.map(async (cat) => {
         const { count } = await supabase
@@ -151,7 +149,7 @@ function AdminCategories() {
                         🗑️
                       </button>
                     </td>
-                  </td>
+                  </tr>
                 ))
               )}
             </tbody>
@@ -180,13 +178,6 @@ function AdminCategories() {
                   placeholder="Slug (адрес) например: hleb"
                   value={formData.slug}
                   onChange={e => setFormData({ ...formData, slug: e.target.value })}
-                  className="w-full p-2 border border-border rounded-lg focus:outline-none focus:border-primary"
-                />
-                <input
-                  type="text"
-                  placeholder="Иконка (эмодзи) опционально"
-                  value={formData.icon}
-                  onChange={e => setFormData({ ...formData, icon: e.target.value })}
                   className="w-full p-2 border border-border rounded-lg focus:outline-none focus:border-primary"
                 />
                 <input
