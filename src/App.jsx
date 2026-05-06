@@ -1,4 +1,4 @@
-import { Routes, Route } from 'react-router-dom'
+import { Routes, Route, useLocation } from 'react-router-dom'
 import Header from './components/Layout/Header'
 import Footer from './components/Layout/Footer'
 import Breadcrumbs from './components/UI/Breadcrumbs'
@@ -20,25 +20,28 @@ import AdminOrders from './pages/admin/AdminOrders'
 import AdminCategories from './pages/admin/AdminCategories'
 
 function App() {
+  const location = useLocation()
+  const isAdminRoute = location.pathname.startsWith('/admin')
+
   return (
     <div className="min-h-screen flex flex-col">
-      <Header />
-      <Breadcrumbs />
-      <main className="flex-grow">
+      {!isAdminRoute && <Header />}
+      {!isAdminRoute && <Breadcrumbs />}
+      <main className={isAdminRoute ? 'flex-grow' : 'flex-grow'}>
         <Routes>
           <Route path="/" element={<MainPage />} />
           <Route path="/catalog" element={<CatalogPage />} />
           <Route path="/product/:id" element={<ProductPage />} />
           <Route path="/category/:slug" element={<CategoryPage />} />
-          <Route path="/cart" element={<CartPage />} />
+          Route path="/cart" element={<CartPage />} />
           <Route path="/checkout" element={<CheckoutPage />} />
           <Route path="/privacy" element={<PrivacyPage />} />
           <Route path="/offer" element={<OfferPage />} />
           <Route path="/order/:id" element={<OrderPage />} />
           <Route path="/login" element={<LoginPage />} />
           <Route path="/my-orders" element={<MyOrdersPage />} />
-                    
-          {/* Админ-панель */}
+          
+          {/* Админ-панель — без хедера и хлебных крошек */}
           <Route path="/admin" element={<AdminLayout />}>
             <Route path="products" element={<AdminProducts />} />
             <Route path="orders" element={<AdminOrders />} />
@@ -48,7 +51,7 @@ function App() {
           <Route path="*" element={<NotFoundPage />} />
         </Routes>
       </main>
-      <Footer />
+      {!isAdminRoute && <Footer />}
     </div>
   )
 }
