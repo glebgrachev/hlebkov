@@ -14,6 +14,7 @@ import OrderPage from './pages/OrderPage'
 import LoginPage from './pages/LoginPage'
 import MyOrdersPage from './pages/MyOrdersPage'
 import NotFoundPage from './pages/NotFoundPage'
+import AdminLayout from './pages/admin/AdminLayout'
 import AdminProducts from './pages/admin/AdminProducts'
 
 function App() {
@@ -34,7 +35,14 @@ function App() {
           <Route path="/order/:id" element={<OrderPage />} />
           <Route path="/login" element={<LoginPage />} />
           <Route path="/my-orders" element={<MyOrdersPage />} />
-          <Route path="/admin/products" element={<AdminProducts />} />
+          
+          {/* Админ-панель */}
+          <Route path="/admin" element={<AdminLayout />}>
+            <Route path="products" element={<AdminProducts />} />
+            <Route path="orders" element={<div className="p-6">Заказы (скоро)</div>} />
+            <Route path="categories" element={<div className="p-6">Категории (скоро)</div>} />
+          </Route>
+          
           <Route path="*" element={<NotFoundPage />} />
         </Routes>
       </main>
