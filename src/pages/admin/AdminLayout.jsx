@@ -18,13 +18,13 @@ function AdminLayout() {
   }
 
   return (
-    <div className="flex min-h-screen bg-warm-bg">
-      {/* Сайдбар */}
-      <aside className="w-64 bg-warm-bg border-r border-border flex-shrink-0">
+    <div className="flex h-screen bg-warm-bg overflow-hidden">
+      {/* Сайдбар — фиксированный */}
+      <aside className="w-64 bg-warm-bg border-r border-border flex-shrink-0 flex flex-col h-full">
         <div className="p-6 border-b border-border">
           <h2 className="text-xl font-display font-bold text-primary">Управление магазином</h2>
         </div>
-        <nav className="p-4 space-y-2">
+        <nav className="p-4 space-y-2 flex-1">
           {menuItems.map((item) => (
             <Link
               key={item.path}
@@ -40,7 +40,7 @@ function AdminLayout() {
             </Link>
           ))}
         </nav>
-        <div className="absolute bottom-0 w-64 p-4 border-t border-border">
+        <div className="p-4 border-t border-border">
           <button
             onClick={() => setShowLogoutModal(true)}
             className="flex items-center gap-3 px-4 py-2 w-full text-left text-red-500 hover:bg-red-50 rounded-lg transition"
@@ -51,7 +51,7 @@ function AdminLayout() {
         </div>
       </aside>
 
-      {/* Контент */}
+      {/* Контент — скроллится */}
       <main className="flex-1 overflow-auto">
         <Outlet />
       </main>
