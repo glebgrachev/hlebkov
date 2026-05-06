@@ -25,7 +25,14 @@ function LoginPage() {
     }
 
     if (result.error) {
-      setError(result.error.message)
+      // Русские сообщения об ошибках
+      if (result.error.message === 'Invalid login credentials') {
+        setError('Вы ввели неверные данные!')
+      } else if (result.error.message === 'Email not confirmed') {
+        setError('Email не подтверждён. Проверьте почту.')
+      } else {
+        setError('Ошибка входа. Попробуйте позже.')
+      }
     } else {
       console.log('1. Вход успешен')
       

@@ -72,20 +72,12 @@ function AdminLayout() {
             <div className="text-5xl mb-4">🚪</div>
             <h3 className="text-xl font-semibold mb-2">Выйти из аккаунта?</h3>
             <p className="text-text-mid mb-6">Вы действительно хотите выйти из профиля?</p>
-            <div className="flex gap-3">
-              <button
-                onClick={handleLogout}
-                className="flex-1 bg-red-500 text-white py-2 rounded-full hover:bg-red-600 transition"
-              >
-                Выйти
-              </button>
-              <button
-                onClick={() => setShowLogoutModal(false)}
-                className="flex-1 bg-gray-300 text-gray-700 py-2 rounded-full hover:bg-gray-400 transition"
-              >
-                Отмена
-              </button>
-            </div>
+            <button
+              onClick={handleLogout}
+              className="w-full bg-red-500 text-white py-2 rounded-full hover:bg-red-600 transition"
+            >
+              Выйти
+            </button>
           </div>
         </div>
       )}
