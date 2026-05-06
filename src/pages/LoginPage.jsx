@@ -27,7 +27,19 @@ function LoginPage() {
     if (result.error) {
       setError(result.error.message)
     } else {
-      navigate(redirectTo)
+      // После успешного входа проверяем роль
+      const { data: { user } } = await supabase.auth.getUser()
+      const { data: profile } = await supabase
+        .from('profiles')
+        .select('role')
+        .eq('id', user.id)
+        .single()
+
+      if (profile?.role === 'admin') {
+        navigate('/admin/products')
+      } else {
+        navigate(redirectTo)
+      }
     }
     setLoading(false)
   }

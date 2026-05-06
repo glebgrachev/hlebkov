@@ -1,9 +1,12 @@
 import { useEffect, useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 import { supabase } from '../../services/supabase'
 
 function AdminProducts() {
   const [products, setProducts] = useState([])
   const [loading, setLoading] = useState(true)
+  const [isAdmin, setIsAdmin] = useState(false)
+  const [checking, setChecking] = useState(true)
   const [showModal, setShowModal] = useState(false)
   const [editingProduct, setEditingProduct] = useState(null)
   const [formData, setFormData] = useState({
@@ -17,10 +20,37 @@ function AdminProducts() {
     is_active: true,
     old_price: ''
   })
+  const navigate = useNavigate()
 
+  // Проверка прав администратора
   useEffect(() => {
-    fetchProducts()
-  }, [])
+    const checkAdmin = async () => {
+      const { data: { user } } = await supabase.auth.getUser()
+      if (!user) {
+        navigate('/login')
+        return
+      }
+      const { data: profile } = await supabase
+        .from('profiles')
+        .select('role')
+        .eq('id', user.id)
+        .single()
+      if (profile?.role !== 'admin') {
+        navigate('/')
+        return
+      }
+      setIsAdmin(true)
+      setChecking(false)
+    }
+    checkAdmin()
+  }, [navigate])
+
+  // Загрузка товаров
+  useEffect(() => {
+    if (isAdmin) {
+      fetchProducts()
+    }
+  }, [isAdmin])
 
   const fetchProducts = async () => {
     const { data } = await supabase
@@ -59,10 +89,10 @@ function AdminProducts() {
     const payload = {
       name: formData.name,
       price: parseInt(formData.price),
-      description: formData.description,
-      weight: formData.weight,
-      category_id: formData.category_id || null,
-      image_url: formData.image_url,
+      description: formData.description || null,
+      weight: formData.weight || null,
+      category_id: formData.category_id ? parseInt(formData.category_id) : null,
+      image_url: formData.image_url || null,
       is_popular: formData.is_popular,
       is_active: formData.is_active,
       old_price: formData.old_price ? parseInt(formData.old_price) : null
@@ -78,12 +108,22 @@ function AdminProducts() {
     fetchProducts()
   }
 
-  if (loading) return <div className="p-8 text-center">Загрузка...</div>
+  if (checking) {
+    return <div className="p-8 text-center">Проверка прав доступа...</div>
+  }
+
+  if (!isAdmin) {
+    return null
+  }
+
+  if (loading) {
+    return <div className="p-8 text-center">Загрузка товаров...</div>
+  }
 
   return (
     <div className="p-6">
       <div className="flex justify-between items-center mb-6">
-        <h1 className="text-3xl font-display font-bold">Товары</h1>
+        <h1 className="text-3xl font-display font-bold">Управление товарами</h1>
         <button
           onClick={() => {
             setEditingProduct(null)
@@ -93,7 +133,7 @@ function AdminProducts() {
             })
             setShowModal(true)
           }}
-          className="bg-primary text-white px-4 py-2 rounded-full hover:bg-primary-dark"
+          className="bg-primary text-white px-4 py-2 rounded-full hover:bg-primary-dark transition"
         >
           + Добавить товар
         </button>
@@ -111,7 +151,7 @@ function AdminProducts() {
               <th className="text-left py-3 px-3">Популярный</th>
               <th className="text-left py-3 px-3">Активен</th>
               <th className="text-left py-3 px-3"></th>
-            </td>
+            </tr>
           </thead>
           <tbody>
             {products.map((product) => (
@@ -119,39 +159,91 @@ function AdminProducts() {
                 <td className="py-3 px-3">{product.id}</td>
                 <td className="py-3 px-3">
                   {product.image_url ? (
-                    <img src={product.image_url} alt={product.name} className="w-10 h-10 object-cover rounded" />
+                    <img 
+                      src={product.image_url} 
+                      alt={product.name} 
+                      className="w-10 h-10 object-cover rounded" 
+                    />
                   ) : (
-                    <div className="w-10 h-10 bg-gray-200 rounded flex items-center justify-center">🥖</div>
+                    <div className="w-10 h-10 bg-gray-200 rounded flex items-center justify-center text-xl">🥖</div>
                   )}
                 </td>
                 <td className="py-3 px-3">{product.name}</td>
                 <td className="py-3 px-3">{product.price} ₽</td>
                 <td className="py-3 px-3">{product.categories?.name || '-'}</td>
-                <td className="py-3 px-3">{product.is_popular ? '✅' : ''}</td>
-                <td className="py-3 px-3">{product.is_active ? '✅' : '❌'}</td>
+                <td className="py-3 px-3 text-center">{product.is_popular ? '✅' : ''}</td>
+                <td className="py-3 px-3 text-center">{product.is_active ? '✅' : '❌'}</td>
                 <td className="py-3 px-3">
-                  <button onClick={() => handleEdit(product)} className="text-primary mr-3">✏️</button>
-                  <button onClick={() => handleDelete(product.id)} className="text-red-500">🗑️</button>
-                </td>
-              </td>
+                  <button 
+                    onClick={() => handleEdit(product)} 
+                    className="text-primary mr-3 hover:opacity-70 transition"
+                  >
+                    ✏️
+                  </button>
+                  <button 
+                    onClick={() => handleDelete(product.id)} 
+                    className="text-red-500 hover:opacity-70 transition"
+                  >
+                    🗑️
+                  </button>
+                 </td>
+               </tr>
             ))}
           </tbody>
         </table>
       </div>
 
-      {/* Модальное окно */}
+      {/* Модальное окно добавления/редактирования */}
       {showModal && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
           <div className="bg-white rounded-2xl max-w-md w-full max-h-[90vh] overflow-y-auto">
             <div className="p-6">
-              <h2 className="text-2xl font-bold mb-4">{editingProduct ? 'Редактировать' : 'Добавить'} товар</h2>
+              <h2 className="text-2xl font-bold mb-4">
+                {editingProduct ? 'Редактировать товар' : 'Добавить товар'}
+              </h2>
               <form onSubmit={handleSubmit} className="space-y-4">
-                <input type="text" placeholder="Название" value={formData.name} onChange={e => setFormData({...formData, name: e.target.value})} className="w-full p-2 border rounded" required />
-                <input type="number" placeholder="Цена" value={formData.price} onChange={e => setFormData({...formData, price: e.target.value})} className="w-full p-2 border rounded" required />
-                <input type="text" placeholder="Вес (например, 350 г)" value={formData.weight} onChange={e => setFormData({...formData, weight: e.target.value})} className="w-full p-2 border rounded" />
-                <input type="text" placeholder="URL фото" value={formData.image_url} onChange={e => setFormData({...formData, image_url: e.target.value})} className="w-full p-2 border rounded" />
-                <input type="text" placeholder="Описание" value={formData.description} onChange={e => setFormData({...formData, description: e.target.value})} className="w-full p-2 border rounded" />
-                <select value={formData.category_id} onChange={e => setFormData({...formData, category_id: e.target.value})} className="w-full p-2 border rounded">
+                <input
+                  type="text"
+                  placeholder="Название *"
+                  value={formData.name}
+                  onChange={e => setFormData({...formData, name: e.target.value})}
+                  className="w-full p-2 border border-border rounded-lg focus:outline-none focus:border-primary"
+                  required
+                />
+                <input
+                  type="number"
+                  placeholder="Цена *"
+                  value={formData.price}
+                  onChange={e => setFormData({...formData, price: e.target.value})}
+                  className="w-full p-2 border border-border rounded-lg focus:outline-none focus:border-primary"
+                  required
+                />
+                <input
+                  type="text"
+                  placeholder="Вес (например, 350 г)"
+                  value={formData.weight}
+                  onChange={e => setFormData({...formData, weight: e.target.value})}
+                  className="w-full p-2 border border-border rounded-lg focus:outline-none focus:border-primary"
+                />
+                <input
+                  type="text"
+                  placeholder="URL фото (Supabase Storage)"
+                  value={formData.image_url}
+                  onChange={e => setFormData({...formData, image_url: e.target.value})}
+                  className="w-full p-2 border border-border rounded-lg focus:outline-none focus:border-primary"
+                />
+                <textarea
+                  placeholder="Описание"
+                  value={formData.description}
+                  onChange={e => setFormData({...formData, description: e.target.value})}
+                  className="w-full p-2 border border-border rounded-lg focus:outline-none focus:border-primary"
+                  rows="3"
+                />
+                <select
+                  value={formData.category_id}
+                  onChange={e => setFormData({...formData, category_id: e.target.value})}
+                  className="w-full p-2 border border-border rounded-lg focus:outline-none focus:border-primary"
+                >
                   <option value="">Без категории</option>
                   <option value="1">Хлеб</option>
                   <option value="2">Выпечка</option>
@@ -159,11 +251,38 @@ function AdminProducts() {
                   <option value="4">Печенье</option>
                   <option value="5">Наборы</option>
                 </select>
-                <label className="flex items-center gap-2"><input type="checkbox" checked={formData.is_popular} onChange={e => setFormData({...formData, is_popular: e.target.checked})} /> Популярный товар</label>
-                <label className="flex items-center gap-2"><input type="checkbox" checked={formData.is_active} onChange={e => setFormData({...formData, is_active: e.target.checked})} /> Активен</label>
+                <label className="flex items-center gap-2 cursor-pointer">
+                  <input
+                    type="checkbox"
+                    checked={formData.is_popular}
+                    onChange={e => setFormData({...formData, is_popular: e.target.checked})}
+                    className="accent-primary"
+                  />
+                  <span>Популярный товар</span>
+                </label>
+                <label className="flex items-center gap-2 cursor-pointer">
+                  <input
+                    type="checkbox"
+                    checked={formData.is_active}
+                    onChange={e => setFormData({...formData, is_active: e.target.checked})}
+                    className="accent-primary"
+                  />
+                  <span>Активен</span>
+                </label>
                 <div className="flex gap-3 pt-4">
-                  <button type="submit" className="bg-primary text-white px-4 py-2 rounded-full flex-1">Сохранить</button>
-                  <button type="button" onClick={() => setShowModal(false)} className="bg-gray-300 px-4 py-2 rounded-full flex-1">Отмена</button>
+                  <button
+                    type="submit"
+                    className="bg-primary text-white px-4 py-2 rounded-full flex-1 hover:bg-primary-dark transition"
+                  >
+                    Сохранить
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setShowModal(false)}
+                    className="bg-gray-300 text-gray-700 px-4 py-2 rounded-full flex-1 hover:bg-gray-400 transition"
+                  >
+                    Отмена
+                  </button>
                 </div>
               </form>
             </div>
