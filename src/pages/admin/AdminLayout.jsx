@@ -22,8 +22,7 @@ function AdminLayout() {
       {/* Сайдбар */}
       <aside className="w-64 bg-warm-bg border-r border-border flex-shrink-0">
         <div className="p-6 border-b border-border">
-          <h2 className="text-xl font-display font-bold text-primary">Админ-панель</h2>
-          <p className="text-xs text-text-mid mt-1">Управление магазином</p>
+          <h2 className="text-xl font-display font-bold text-primary">Управление магазином</h2>
         </div>
         <nav className="p-4 space-y-2">
           {menuItems.map((item) => (
