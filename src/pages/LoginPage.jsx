@@ -25,7 +25,6 @@ function LoginPage() {
     }
 
     if (result.error) {
-      // Русские сообщения об ошибках
       if (result.error.message === 'Invalid login credentials') {
         setError('Вы ввели неверные данные!')
       } else if (result.error.message === 'Email not confirmed') {
@@ -51,8 +50,8 @@ function LoginPage() {
       console.log('6. Is admin?', profile?.role === 'admin')
 
       if (profile?.role === 'admin') {
-        console.log('7. Редирект на /admin/products')
-        navigate('/admin/products')
+        console.log('7. Редирект на /admin/orders')
+        navigate('/admin/orders')
       } else {
         console.log('7. Редирект на', redirectTo)
         navigate(redirectTo)
