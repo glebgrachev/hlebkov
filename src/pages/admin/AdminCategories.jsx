@@ -1,11 +1,13 @@
 import { useEffect, useState } from 'react'
 import { supabase } from '../../services/supabase'
+import { uploadImage } from '../../utils/uploadImage'
 
 function AdminCategories() {
   const [categories, setCategories] = useState([])
   const [loading, setLoading] = useState(true)
   const [showModal, setShowModal] = useState(false)
   const [editingCategory, setEditingCategory] = useState(null)
+  const [uploadingImage, setUploadingImage] = useState(false)
   const [formData, setFormData] = useState({
     name: '',
     slug: '',
@@ -44,6 +46,18 @@ function AdminCategories() {
     
     setCategories(categoriesWithCount)
     setLoading(false)
+  }
+
+  const handleImageUpload = async (e) => {
+    const file = e.target.files[0]
+    if (!file) return
+    
+    setUploadingImage(true)
+    const imageUrl = await uploadImage(file, 'categories')
+    if (imageUrl) {
+      setFormData({ ...formData, image_url: imageUrl })
+    }
+    setUploadingImage(false)
   }
 
   const handleEdit = (category) => {
@@ -180,13 +194,30 @@ function AdminCategories() {
                   onChange={e => setFormData({ ...formData, slug: e.target.value })}
                   className="w-full p-2 border border-border rounded-lg focus:outline-none focus:border-primary"
                 />
-                <input
-                  type="text"
-                  placeholder="URL фото"
-                  value={formData.image_url}
-                  onChange={e => setFormData({ ...formData, image_url: e.target.value })}
-                  className="w-full p-2 border border-border rounded-lg focus:outline-none focus:border-primary"
-                />
+                <div className="flex gap-2 items-center">
+                  <input
+                    type="text"
+                    placeholder="URL фото или загрузите файл"
+                    value={formData.image_url}
+                    onChange={e => setFormData({ ...formData, image_url: e.target.value })}
+                    className="flex-1 p-2 border border-border rounded-lg focus:outline-none focus:border-primary"
+                  />
+                  <label className="cursor-pointer bg-gray-200 text-gray-700 px-3 py-2 rounded-lg hover:bg-gray-300 transition">
+                    📁 Загрузить
+                    <input
+                      type="file"
+                      accept="image/*"
+                      onChange={handleImageUpload}
+                      className="hidden"
+                    />
+                  </label>
+                </div>
+                {uploadingImage && <p className="text-sm text-text-mid">Загрузка фото...</p>}
+                {formData.image_url && !uploadingImage && (
+                  <div className="mt-2">
+                    <img src={formData.image_url} alt="preview" className="w-20 h-20 object-cover rounded" />
+                  </div>
+                )}
                 <input
                   type="number"
                   placeholder="Порядок сортировки"
