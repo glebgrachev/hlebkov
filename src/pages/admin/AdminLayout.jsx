@@ -21,8 +21,19 @@ function AdminLayout() {
     <div className="flex h-screen bg-warm-bg overflow-hidden">
       {/* Сайдбар — фиксированный */}
       <aside className="w-64 bg-warm-bg border-r border-border flex-shrink-0 flex flex-col h-full">
+        {/* Логотип и название */}
         <div className="p-6 border-b border-border">
-          <h2 className="text-xl font-display font-bold text-primary">Управление магазином</h2>
+          <div className="flex items-center gap-3">
+            <img 
+              src="/android-chrome-192x192.png" 
+              alt="Хлебков" 
+              className="w-8 h-8 md:w-10 md:h-10"
+            />
+            <div>
+              <div className="text-xl font-display font-bold text-primary">Хлебков</div>
+              <div className="text-[10px] text-text-mid tracking-wider">Управление магазином</div>
+            </div>
+          </div>
         </div>
         <nav className="p-4 space-y-2 flex-1">
           {menuItems.map((item) => (
