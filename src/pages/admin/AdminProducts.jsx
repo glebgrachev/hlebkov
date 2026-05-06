@@ -119,8 +119,8 @@ function AdminProducts() {
   }
 
   return (
-    <div className="p-6">
-      <div className="flex justify-between items-center mb-6">
+    <div className="h-full flex flex-col p-6">
+      <div className="flex justify-between items-center mb-6 flex-shrink-0">
         <div style={{ fontFamily: 'Inter, sans-serif' }} className="text-3xl font-bold text-text-dark">
           Товары
         </div>
@@ -139,8 +139,8 @@ function AdminProducts() {
         </button>
       </div>
 
-      <div className="border border-border rounded-lg overflow-hidden">
-        <div className="overflow-x-auto max-h-[calc(100vh-200px)] overflow-y-auto">
+      <div className="border border-border rounded-lg flex flex-col flex-1 overflow-hidden">
+        <div className="overflow-x-auto flex-1">
           <table className="w-full border-collapse">
             <thead className="bg-warm-bg sticky top-0 z-10">
               <tr className="border-b border-border">
@@ -152,7 +152,7 @@ function AdminProducts() {
                 <th className="text-left py-3 px-3">Популярный</th>
                 <th className="text-left py-3 px-3">Активен</th>
                 <th className="text-left py-3 px-3"></th>
-              <tr>
+              </tr>
             </thead>
             <tbody>
               {products.map((product) => (
