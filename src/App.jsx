@@ -14,6 +14,7 @@ import OrderPage from './pages/OrderPage'
 import LoginPage from './pages/LoginPage'
 import MyOrdersPage from './pages/MyOrdersPage'
 import NotFoundPage from './pages/NotFoundPage'
+import AdminProducts from './pages/admin/AdminProducts'
 
 function App() {
   return (
@@ -33,6 +34,7 @@ function App() {
           <Route path="/order/:id" element={<OrderPage />} />
           <Route path="/login" element={<LoginPage />} />
           <Route path="/my-orders" element={<MyOrdersPage />} />
+          <Route path="/admin/products" element={<AdminProducts />} />
           <Route path="*" element={<NotFoundPage />} />
         </Routes>
       </main>
