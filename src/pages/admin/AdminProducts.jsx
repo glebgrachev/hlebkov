@@ -104,7 +104,7 @@ function AdminProducts() {
       await supabase.from('products').insert([payload])
     }
     setShowModal(false)
-    setEditingCategory(null)
+    setEditingProduct(null)
     fetchProducts()
   }
 
@@ -123,7 +123,7 @@ function AdminProducts() {
   return (
     <div className="p-6 flex flex-col h-full">
       <div className="flex justify-between items-center mb-6 flex-shrink-0">
-        <h1 className="text-3xl font-display font-bold">Товары</h1>
+        <h1 className="text-3xl font-bold text-text-dark">Товары</h1>
         <button
           onClick={() => {
             setEditingProduct(null)
@@ -142,8 +142,8 @@ function AdminProducts() {
       <div className="border border-border rounded-lg overflow-hidden flex flex-col flex-1">
         <div className="overflow-x-auto flex-1">
           <table className="w-full border-collapse">
-            <thead className="bg-gray-50 sticky top-0 z-10">
-              <tr className="border-b border-border">
+            <thead className="bg-warm-bg sticky top-0 z-10">
+              <tr className="border-b-2 border-border">
                 <th className="text-left py-3 px-3">ID</th>
                 <th className="text-left py-3 px-3">Фото</th>
                 <th className="text-left py-3 px-3">Название</th>
@@ -152,7 +152,7 @@ function AdminProducts() {
                 <th className="text-left py-3 px-3">Популярный</th>
                 <th className="text-left py-3 px-3">Активен</th>
                 <th className="text-left py-3 px-3"></th>
-               </tr>
+              </tr>
             </thead>
             <tbody>
               {products.map((product) => (
@@ -189,7 +189,7 @@ function AdminProducts() {
         </div>
       </div>
 
-      {/* Модальное окно — без изменений */}
+      {/* Модальное окно добавления/редактирования */}
       {showModal && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
           <div className="bg-white rounded-2xl max-w-md w-full max-h-[90vh] overflow-y-auto">
@@ -198,12 +198,85 @@ function AdminProducts() {
                 {editingProduct ? 'Редактировать товар' : 'Добавить товар'}
               </h2>
               <form onSubmit={handleSubmit} className="space-y-4">
-                {/* ... поля формы (без изменений) ... */}
+                <input
+                  type="text"
+                  placeholder="Название *"
+                  value={formData.name}
+                  onChange={e => setFormData({...formData, name: e.target.value})}
+                  className="w-full p-2 border border-border rounded-lg focus:outline-none focus:border-primary"
+                  required
+                />
+                <input
+                  type="number"
+                  placeholder="Цена *"
+                  value={formData.price}
+                  onChange={e => setFormData({...formData, price: e.target.value})}
+                  className="w-full p-2 border border-border rounded-lg focus:outline-none focus:border-primary"
+                  required
+                />
+                <input
+                  type="text"
+                  placeholder="Вес (например, 350 г)"
+                  value={formData.weight}
+                  onChange={e => setFormData({...formData, weight: e.target.value})}
+                  className="w-full p-2 border border-border rounded-lg focus:outline-none focus:border-primary"
+                />
+                <input
+                  type="text"
+                  placeholder="URL фото (Supabase Storage)"
+                  value={formData.image_url}
+                  onChange={e => setFormData({...formData, image_url: e.target.value})}
+                  className="w-full p-2 border border-border rounded-lg focus:outline-none focus:border-primary"
+                />
+                <textarea
+                  placeholder="Описание"
+                  value={formData.description}
+                  onChange={e => setFormData({...formData, description: e.target.value})}
+                  className="w-full p-2 border border-border rounded-lg focus:outline-none focus:border-primary"
+                  rows="3"
+                />
+                <select
+                  value={formData.category_id}
+                  onChange={e => setFormData({...formData, category_id: e.target.value})}
+                  className="w-full p-2 border border-border rounded-lg focus:outline-none focus:border-primary"
+                >
+                  <option value="">Без категории</option>
+                  <option value="1">Хлеб</option>
+                  <option value="2">Выпечка</option>
+                  <option value="3">Пирожные</option>
+                  <option value="4">Печенье</option>
+                  <option value="5">Наборы</option>
+                </select>
+                <label className="flex items-center gap-2 cursor-pointer">
+                  <input
+                    type="checkbox"
+                    checked={formData.is_popular}
+                    onChange={e => setFormData({...formData, is_popular: e.target.checked})}
+                    className="accent-primary"
+                  />
+                  <span>Популярный товар</span>
+                </label>
+                <label className="flex items-center gap-2 cursor-pointer">
+                  <input
+                    type="checkbox"
+                    checked={formData.is_active}
+                    onChange={e => setFormData({...formData, is_active: e.target.checked})}
+                    className="accent-primary"
+                  />
+                  <span>Активен</span>
+                </label>
                 <div className="flex gap-3 pt-4">
-                  <button type="submit" className="flex-1 bg-primary text-white py-2 rounded-full hover:bg-primary-dark transition">
+                  <button
+                    type="submit"
+                    className="flex-1 bg-primary text-white py-2 rounded-full hover:bg-primary-dark transition"
+                  >
                     Сохранить
                   </button>
-                  <button type="button" onClick={() => setShowModal(false)} className="flex-1 bg-gray-300 text-gray-700 py-2 rounded-full hover:bg-gray-400 transition">
+                  <button
+                    type="button"
+                    onClick={() => setShowModal(false)}
+                    className="flex-1 bg-gray-300 text-gray-700 py-2 rounded-full hover:bg-gray-400 transition"
+                  >
                     Отмена
                   </button>
                 </div>
