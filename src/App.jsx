@@ -16,6 +16,7 @@ import MyOrdersPage from './pages/MyOrdersPage'
 import NotFoundPage from './pages/NotFoundPage'
 import AdminLayout from './pages/admin/AdminLayout'
 import AdminProducts from './pages/admin/AdminProducts'
+import AdminOrders from './pages/admin/AdminOrders'
 
 function App() {
   return (
@@ -35,11 +36,11 @@ function App() {
           <Route path="/order/:id" element={<OrderPage />} />
           <Route path="/login" element={<LoginPage />} />
           <Route path="/my-orders" element={<MyOrdersPage />} />
-          
+                    
           {/* Админ-панель */}
           <Route path="/admin" element={<AdminLayout />}>
             <Route path="products" element={<AdminProducts />} />
-            <Route path="orders" element={<div className="p-6">Заказы (скоро)</div>} />
+            <Route path="orders" element={<AdminOrders />} />
             <Route path="categories" element={<div className="p-6">Категории (скоро)</div>} />
           </Route>
           
