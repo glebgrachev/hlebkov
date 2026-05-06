@@ -22,7 +22,6 @@ function AdminProducts() {
   })
   const navigate = useNavigate()
 
-  // Проверка прав администратора
   useEffect(() => {
     const checkAdmin = async () => {
       const { data: { user } } = await supabase.auth.getUser()
@@ -45,7 +44,6 @@ function AdminProducts() {
     checkAdmin()
   }, [navigate])
 
-  // Загрузка товаров
   useEffect(() => {
     if (isAdmin) {
       fetchProducts()
@@ -121,8 +119,8 @@ function AdminProducts() {
   }
 
   return (
-    <div className="p-6 flex flex-col h-full">
-      <div className="flex justify-between items-center mb-6 flex-shrink-0">
+    <div className="p-6">
+      <div className="flex justify-between items-center mb-6">
         <h1 className="text-3xl font-bold text-text-dark">Товары</h1>
         <button
           onClick={() => {
@@ -139,57 +137,54 @@ function AdminProducts() {
         </button>
       </div>
 
-      <div className="border border-border rounded-lg overflow-hidden flex flex-col flex-1">
-        <div className="overflow-x-auto flex-1">
-          <table className="w-full border-collapse">
-            <thead className="bg-warm-bg sticky top-0 z-10">
-              <tr className="border-b-2 border-border">
-                <th className="text-left py-3 px-3">ID</th>
-                <th className="text-left py-3 px-3">Фото</th>
-                <th className="text-left py-3 px-3">Название</th>
-                <th className="text-left py-3 px-3">Цена</th>
-                <th className="text-left py-3 px-3">Категория</th>
-                <th className="text-left py-3 px-3">Популярный</th>
-                <th className="text-left py-3 px-3">Активен</th>
-                <th className="text-left py-3 px-3"></th>
+      <div className="overflow-x-auto">
+        <table className="w-full border-collapse">
+          <thead>
+            <tr className="border-b border-border">
+              <th className="text-left py-3 px-3">ID</th>
+              <th className="text-left py-3 px-3">Фото</th>
+              <th className="text-left py-3 px-3">Название</th>
+              <th className="text-left py-3 px-3">Цена</th>
+              <th className="text-left py-3 px-3">Категория</th>
+              <th className="text-left py-3 px-3">Популярный</th>
+              <th className="text-left py-3 px-3">Активен</th>
+              <th className="text-left py-3 px-3"></th>
+            </tr>
+          </thead>
+          <tbody>
+            {products.map((product) => (
+              <tr key={product.id} className="border-b border-border hover:bg-warm-bg">
+                <td className="py-3 px-3">{product.id}</td>
+                <td className="py-3 px-3">
+                  {product.image_url ? (
+                    <img 
+                      src={product.image_url} 
+                      alt={product.name} 
+                      className="w-10 h-10 object-cover rounded"
+                    />
+                  ) : (
+                    <div className="w-10 h-10 bg-gray-200 rounded flex items-center justify-center text-xl">🥖</div>
+                  )}
+                </td>
+                <td className="py-3 px-3">{product.name}</td>
+                <td className="py-3 px-3">{product.price} ₽</td>
+                <td className="py-3 px-3">{product.categories?.name || '-'}</td>
+                <td className="py-3 px-3 text-center">{product.is_popular ? '✅' : ''}</td>
+                <td className="py-3 px-3 text-center">{product.is_active ? '✅' : '❌'}</td>
+                <td className="py-3 px-3">
+                  <button onClick={() => handleEdit(product)} className="text-primary mr-3 hover:opacity-70 transition">
+                    ✏️
+                  </button>
+                  <button onClick={() => handleDelete(product.id)} className="text-red-500 hover:opacity-70 transition">
+                    🗑️
+                  </button>
+                </td>
               </tr>
-            </thead>
-            <tbody>
-              {products.map((product) => (
-                <tr key={product.id} className="border-b border-border hover:bg-warm-bg">
-                  <td className="py-3 px-3">{product.id}</td>
-                  <td className="py-3 px-3">
-                    {product.image_url ? (
-                      <img 
-                        src={product.image_url} 
-                        alt={product.name} 
-                        className="w-10 h-10 object-cover rounded"
-                      />
-                    ) : (
-                      <div className="w-10 h-10 bg-gray-200 rounded flex items-center justify-center text-xl">🥖</div>
-                    )}
-                  </td>
-                  <td className="py-3 px-3">{product.name}</td>
-                  <td className="py-3 px-3">{product.price} ₽</td>
-                  <td className="py-3 px-3">{product.categories?.name || '-'}</td>
-                  <td className="py-3 px-3 text-center">{product.is_popular ? '✅' : ''}</td>
-                  <td className="py-3 px-3 text-center">{product.is_active ? '✅' : '❌'}</td>
-                  <td className="py-3 px-3">
-                    <button onClick={() => handleEdit(product)} className="text-primary mr-3 hover:opacity-70 transition">
-                      ✏️
-                    </button>
-                    <button onClick={() => handleDelete(product.id)} className="text-red-500 hover:opacity-70 transition">
-                      🗑️
-                    </button>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
+            ))}
+          </tbody>
+        </table>
       </div>
 
-      {/* Модальное окно добавления/редактирования */}
       {showModal && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
           <div className="bg-white rounded-2xl max-w-md w-full max-h-[90vh] overflow-y-auto">
@@ -223,7 +218,7 @@ function AdminProducts() {
                 />
                 <input
                   type="text"
-                  placeholder="URL фото (Supabase Storage)"
+                  placeholder="URL фото"
                   value={formData.image_url}
                   onChange={e => setFormData({...formData, image_url: e.target.value})}
                   className="w-full p-2 border border-border rounded-lg focus:outline-none focus:border-primary"
