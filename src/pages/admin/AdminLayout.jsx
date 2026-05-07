@@ -10,6 +10,7 @@ function AdminLayout() {
     { path: '/admin/orders', label: 'Заказы', icon: '📦' },
     { path: '/admin/categories', label: 'Категории', icon: '📂' },
     { path: '/admin/products', label: 'Товары', icon: '🛒' },
+    { path: '/admin/users', label: 'Пользователи', icon: '👥' },
   ]
 
   const handleLogout = async () => {
