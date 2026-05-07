@@ -4,7 +4,7 @@ import { supabase } from '../services/supabase'
 import { useCart } from '../context/CartContext'
 
 function CategoryPage() {
-  const { slug } = useParams()
+  const { id } = useParams() // теперь получаем id вместо slug
   const [category, setCategory] = useState(null)
   const [products, setProducts] = useState([])
   const [loading, setLoading] = useState(true)
@@ -14,10 +14,11 @@ function CategoryPage() {
 
   useEffect(() => {
     const fetchCategoryAndProducts = async () => {
+      // Ищем категорию по id (число)
       const { data: categoryData, error: categoryError } = await supabase
         .from('categories')
         .select('*')
-        .eq('slug', slug)
+        .eq('id', id)
         .single()
 
       if (categoryError) {
@@ -40,7 +41,7 @@ function CategoryPage() {
     }
 
     fetchCategoryAndProducts()
-  }, [slug])
+  }, [id])
 
   const handleAddToCart = (product) => {
     addToCart(product)
@@ -50,6 +51,13 @@ function CategoryPage() {
       setShowCartModal(false)
       setTimeout(() => setModalProduct(null), 300)
     }, 2000)
+  }
+
+  // Функция для склонения слова "товар"
+  const getProductsCountText = (count) => {
+    if (count === 1) return 'товар'
+    if (count < 5) return 'товара'
+    return 'товаров'
   }
 
   if (loading) {
@@ -69,7 +77,7 @@ function CategoryPage() {
     <div className="container mx-auto px-4 py-12">
       <h1 className="text-4xl font-display font-bold text-center mb-2">{category.name}</h1>
       <p className="text-center text-text-mid mb-8">
-        {products.length} {products.length === 1 ? 'товар' : products.length < 5 ? 'товара' : 'товаров'}
+        {products.length} {getProductsCountText(products.length)}
       </p>
 
       {products.length === 0 ? (
