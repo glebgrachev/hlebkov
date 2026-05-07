@@ -33,7 +33,7 @@ function Categories() {
           {categories.map((cat) => (
             <Link
               key={cat.id}
-              to={`/category/${cat.slug}`}
+              to={`/category/${cat.id}`}  // ← ИСПРАВЛЕНО: slug → id
               className="bg-white rounded-2xl p-6 text-center hover-lift border border-[#EDE6DD] hover:border-[#D96E2A] transition-all block"
             >
               {cat.image_url ? (
