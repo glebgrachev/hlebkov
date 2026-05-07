@@ -184,7 +184,7 @@ function AdminProducts() {
               <th className="text-left py-3 px-3">Популярный</th>
               <th className="text-left py-3 px-3">Активен</th>
               <th className="text-left py-3 px-3"></th>
-            </table>
+            </tr>
           </thead>
           <tbody>
             {products.map((product) => (

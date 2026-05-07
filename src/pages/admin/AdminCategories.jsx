@@ -10,8 +10,6 @@ function AdminCategories() {
   const [uploadingImage, setUploadingImage] = useState(false)
   const [formData, setFormData] = useState({
     name: '',
-    slug: '',
-    icon: '',
     image_url: '',
     sort_order: 0
   })
@@ -64,8 +62,6 @@ function AdminCategories() {
     setEditingCategory(category)
     setFormData({
       name: category.name,
-      slug: category.slug,
-      icon: category.icon || '',
       image_url: category.image_url || '',
       sort_order: category.sort_order || 0
     })
@@ -81,10 +77,9 @@ function AdminCategories() {
 
   const handleSubmit = async (e) => {
     e.preventDefault()
+    
     const payload = {
       name: formData.name,
-      slug: formData.slug || formData.name.toLowerCase().replace(/ /g, '-'),
-      icon: formData.icon || null,
       image_url: formData.image_url || null,
       sort_order: parseInt(formData.sort_order) || 0
     }
@@ -110,7 +105,7 @@ function AdminCategories() {
         <button
           onClick={() => {
             setEditingCategory(null)
-            setFormData({ name: '', slug: '', icon: '', image_url: '', sort_order: 0 })
+            setFormData({ name: '', image_url: '', sort_order: 0 })
             setShowModal(true)
           }}
           className="bg-primary text-white px-4 py-2 rounded-full hover:bg-primary-dark transition"
@@ -187,13 +182,6 @@ function AdminCategories() {
                   className="w-full p-2 border border-border rounded-lg focus:outline-none focus:border-primary"
                   required
                 />
-                <input
-                  type="text"
-                  placeholder="Slug (адрес) например: hleb"
-                  value={formData.slug}
-                  onChange={e => setFormData({ ...formData, slug: e.target.value })}
-                  className="w-full p-2 border border-border rounded-lg focus:outline-none focus:border-primary"
-                />
                 <div className="flex gap-2 items-center">
                   <input
                     type="text"
@@ -212,9 +200,9 @@ function AdminCategories() {
                     />
                   </label>
                 </div>
-                {uploadingImage && <p className="text-sm text-text-mid">Загрузка фото...</p>}
+                {uploadingImage && <p className="text-sm text-text-mid text-center">Загрузка фото...</p>}
                 {formData.image_url && !uploadingImage && (
-                  <div className="mt-2">
+                  <div className="mt-2 flex justify-center">
                     <img src={formData.image_url} alt="preview" className="w-20 h-20 object-cover rounded" />
                   </div>
                 )}
