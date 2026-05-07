@@ -44,6 +44,7 @@ function CheckoutPage() {
   const [loading, setLoading] = useState(false)
   const [user, setUser] = useState(null)
   const [checkingAuth, setCheckingAuth] = useState(true)
+  const [loadingProfile, setLoadingProfile] = useState(true)
   const [errors, setErrors] = useState({ name: '', phone: '' })
   const [formData, setFormData] = useState({
     name: '',
@@ -51,20 +52,40 @@ function CheckoutPage() {
     address: '',
     paymentMethod: 'cash'
   })
+
   const navigate = useNavigate()
 
-  // Проверка авторизации
+  // Проверка авторизации и загрузка профиля
   useEffect(() => {
-    const getUser = async () => {
+    const getUserAndProfile = async () => {
       const { data: { user } } = await supabase.auth.getUser()
       if (!user) {
         navigate('/login', { state: { redirect: '/checkout' } })
-      } else {
-        setUser(user)
+        return
       }
+      
+      setUser(user)
+      
+      // Загружаем данные профиля
+      const { data: profile } = await supabase
+        .from('profiles')
+        .select('full_name, phone, address')
+        .eq('id', user.id)
+        .single()
+      
+      // Заполняем форму данными из профиля (если есть)
+      setFormData(prev => ({
+        ...prev,
+        name: profile?.full_name || '',
+        phone: profile?.phone ? formatPhoneNumber(profile.phone) : '+7',
+        address: profile?.address || ''
+      }))
+      
+      setLoadingProfile(false)
       setCheckingAuth(false)
     }
-    getUser()
+    
+    getUserAndProfile()
   }, [navigate])
 
   const handleChange = (e) => {
@@ -102,6 +123,32 @@ function CheckoutPage() {
     return isValid
   }
 
+  // Сохранение данных в профиль
+  const saveProfileData = async () => {
+    const capitalizedName = capitalizeName(formData.name)
+    
+    const updateData = {}
+    
+    // Обновляем только если данные изменились
+    if (formData.name && formData.name.trim()) {
+      updateData.full_name = capitalizedName
+    }
+    if (formData.phone && formData.phone !== '+7') {
+      const cleanPhone = formData.phone.replace(/\D/g, '')
+      updateData.phone = `+${cleanPhone}`
+    }
+    if (formData.address && formData.address.trim()) {
+      updateData.address = formData.address.trim()
+    }
+    
+    if (Object.keys(updateData).length > 0) {
+      await supabase
+        .from('profiles')
+        .update(updateData)
+        .eq('id', user.id)
+    }
+  }
+
   const handleSubmit = async (e) => {
     e.preventDefault()
     
@@ -114,7 +161,9 @@ function CheckoutPage() {
       return
     }
     
-    // Капитализируем имя перед отправкой
+    // Сохраняем данные в профиль
+    await saveProfileData()
+    
     const capitalizedName = capitalizeName(formData.name)
 
     setLoading(true)
@@ -174,8 +223,8 @@ function CheckoutPage() {
     }
   }
 
-  if (checkingAuth) {
-    return <div className="container mx-auto px-4 py-16 text-center">Проверка авторизации...</div>
+  if (checkingAuth || loadingProfile) {
+    return <div className="container mx-auto px-4 py-16 text-center">Загрузка...</div>
   }
 
   if (cart.length === 0) {
@@ -227,6 +276,7 @@ function CheckoutPage() {
               {errors.phone && (
                 <p className="text-red-500 text-sm mt-1">{errors.phone}</p>
               )}
+              <p className="text-xs text-text-mid mt-1">Вы можете изменить эти данные в настройках профиля</p>
             </div>
             <div>
               <label className="block text-text-dark font-semibold mb-1">Адрес доставки</label>
