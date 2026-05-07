@@ -82,7 +82,7 @@ function AdminOrders() {
           placeholder="Поиск по № заказа"
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
-          className="px-4 py-1 border border-border rounded-full text-sm w-48 focus:outline-none focus:border-primary"
+          className="px-4 py-1 border border-border rounded-full text-sm w-48 focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary bg-white"
         />
       </div>
 
