@@ -45,6 +45,8 @@ function CheckoutPage() {
   const [user, setUser] = useState(null)
   const [checkingAuth, setCheckingAuth] = useState(true)
   const [loadingProfile, setLoadingProfile] = useState(true)
+  const [showSuccessModal, setShowSuccessModal] = useState(false)
+  const [successOrder, setSuccessOrder] = useState(null)
   const [errors, setErrors] = useState({ name: '', phone: '' })
   const [formData, setFormData] = useState({
     name: '',
@@ -210,10 +212,14 @@ function CheckoutPage() {
           alert('Ошибка создания платежа')
         }
       } else {
-        // Наличные — просто очищаем корзину и показываем успех
+        // Наличные — очищаем корзину и показываем модалку
         clearCart()
-        alert('Заказ оформлен! Скоро свяжемся с вами.')
-        navigate('/my-orders')
+        setSuccessOrder({
+          id: order.id,
+          total: totalPrice,
+          address: formData.address || 'Самовывоз'
+        })
+        setShowSuccessModal(true)
       }
     } catch (err) {
       console.error('Ошибка:', err)
@@ -223,11 +229,19 @@ function CheckoutPage() {
     }
   }
 
+  const handleModalClose = () => {
+    setShowSuccessModal(false)
+    setTimeout(() => {
+      setSuccessOrder(null)
+      navigate('/my-orders')
+    }, 300)
+  }
+
   if (checkingAuth || loadingProfile) {
     return <div className="container mx-auto px-4 py-16 text-center">Загрузка...</div>
   }
 
-  if (cart.length === 0) {
+  if (cart.length === 0 && !showSuccessModal) {
     return (
       <div className="container mx-auto px-4 py-20 text-center">
         <h1 className="text-4xl font-display font-bold mb-4">Корзина пуста</h1>
@@ -344,6 +358,34 @@ function CheckoutPage() {
           </div>
         </div>
       </div>
+
+      {/* Модальное окно успешного заказа */}
+      {showSuccessModal && successOrder && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 transition-opacity duration-300">
+          <div className="bg-white rounded-2xl p-8 max-w-sm mx-4 text-center shadow-2xl animate-fade-in">
+            <div className="text-5xl mb-4">🎉</div>
+            <h3 className="text-xl font-semibold mb-2">Заказ оформлен!</h3>
+            <p className="text-text-mid mb-1">
+              Номер заказа: <span className="font-semibold">#{successOrder.id}</span>
+            </p>
+            <p className="text-text-mid mb-1">
+              Сумма: <span className="font-semibold">{successOrder.total} ₽</span>
+            </p>
+            <p className="text-text-mid mb-4">
+              {successOrder.address === 'Самовывоз' ? 'Самовывоз' : 'Доставка'}
+            </p>
+            <p className="text-sm text-text-mid mb-6">
+              Скоро свяжемся с вами для подтверждения
+            </p>
+            <button
+              onClick={handleModalClose}
+              className="bg-primary text-white px-6 py-2 rounded-full hover:bg-primary-dark transition"
+            >
+              Мои заказы
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   )
 }
