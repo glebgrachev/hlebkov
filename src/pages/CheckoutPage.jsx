@@ -366,7 +366,7 @@ function CheckoutPage() {
             <div className="text-5xl mb-4">🎉</div>
             <h3 className="text-xl font-semibold mb-2">Заказ оформлен!</h3>
             <p className="text-text-mid mb-1">
-              Номер заказа: <span className="font-semibold">#{successOrder.id}</span>
+              Номер заказа: <span className="font-semibold">{successOrder.id}</span>
             </p>
             <p className="text-text-mid mb-1">
               Сумма: <span className="font-semibold">{successOrder.total} ₽</span>
