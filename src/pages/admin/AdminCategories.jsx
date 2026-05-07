@@ -10,8 +10,7 @@ function AdminCategories() {
   const [uploadingImage, setUploadingImage] = useState(false)
   const [formData, setFormData] = useState({
     name: '',
-    image_url: '',
-    sort_order: 0
+    image_url: ''
   })
 
   useEffect(() => {
@@ -62,8 +61,7 @@ function AdminCategories() {
     setEditingCategory(category)
     setFormData({
       name: category.name,
-      image_url: category.image_url || '',
-      sort_order: category.sort_order || 0
+      image_url: category.image_url || ''
     })
     setShowModal(true)
   }
@@ -80,8 +78,7 @@ function AdminCategories() {
     
     const payload = {
       name: formData.name,
-      image_url: formData.image_url || null,
-      sort_order: parseInt(formData.sort_order) || 0
+      image_url: formData.image_url || null
     }
 
     if (editingCategory) {
@@ -105,7 +102,7 @@ function AdminCategories() {
         <button
           onClick={() => {
             setEditingCategory(null)
-            setFormData({ name: '', image_url: '', sort_order: 0 })
+            setFormData({ name: '', image_url: '' })
             setShowModal(true)
           }}
           className="bg-primary text-white px-4 py-2 rounded-full hover:bg-primary-dark transition"
@@ -206,13 +203,6 @@ function AdminCategories() {
                     <img src={formData.image_url} alt="preview" className="w-20 h-20 object-cover rounded" />
                   </div>
                 )}
-                <input
-                  type="number"
-                  placeholder="Порядок сортировки"
-                  value={formData.sort_order}
-                  onChange={e => setFormData({ ...formData, sort_order: e.target.value })}
-                  className="w-full p-2 border border-border rounded-lg focus:outline-none focus:border-primary"
-                />
                 <div className="flex gap-3 pt-4">
                   <button
                     type="submit"
