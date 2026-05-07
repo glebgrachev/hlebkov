@@ -34,30 +34,13 @@ function AdminOrders() {
   const fetchOrderDetails = async (orderId) => {
     setDetailsLoading(true)
     
-    // Получаем детали заказа (товары)
-    const { data: items } = await supabase
-      .from('order_items')
-      .select(`
-        *,
-        products:product_id (
-          name,
-          price,
-          images
-        )
-      `)
-      .eq('order_id', orderId)
-    
-    // Получаем полную информацию о заказе
     const { data: order } = await supabase
       .from('orders')
       .select('*')
       .eq('id', orderId)
       .single()
     
-    setOrderDetails({
-      ...order,
-      items: items || []
-    })
+    setOrderDetails(order)
     setDetailsLoading(false)
   }
 
@@ -71,9 +54,26 @@ function AdminOrders() {
     setOrderDetails(null)
   }
 
+  const formatDateTime = (dateString) => {
+    const date = new Date(dateString)
+    const day = date.getDate().toString().padStart(2, '0')
+    const month = (date.getMonth() + 1).toString().padStart(2, '0')
+    const year = date.getFullYear()
+    const hours = date.getHours().toString().padStart(2, '0')
+    const minutes = date.getMinutes().toString().padStart(2, '0')
+    return `${day}.${month}.${year} ${hours}:${minutes}`
+  }
+
+  const formatTime = (dateString) => {
+    const date = new Date(dateString)
+    const hours = date.getHours().toString().padStart(2, '0')
+    const minutes = date.getMinutes().toString().padStart(2, '0')
+    return `${hours}:${minutes}`
+  }
+
   const filteredOrders = orders.filter(order => {
     if (statusFilter !== 'all' && order.status !== statusFilter) return false
-    if (searchTerm && !order.order_number?.toString().includes(searchTerm) && !order.id.toString().includes(searchTerm)) return false
+    if (searchTerm && !order.id.toString().includes(searchTerm)) return false
     return true
   })
 
@@ -136,7 +136,7 @@ function AdminOrders() {
             <thead className="bg-warm-bg sticky top-0 z-10">
               <tr className="border-b border-border">
                 <th className="text-left py-3 px-3">№</th>
-                <th className="text-left py-3 px-3">Дата</th>
+                <th className="text-left py-3 px-3">Дата и время</th>
                 <th className="text-left py-3 px-3">Имя</th>
                 <th className="text-left py-3 px-3">Телефон</th>
                 <th className="text-left py-3 px-3">Сумма</th>
@@ -160,8 +160,15 @@ function AdminOrders() {
                       className="border-b border-border hover:bg-warm-bg cursor-pointer"
                       onClick={() => handleOrderClick(order)}
                     >
-                      <td className="py-3 px-3">{order.id}</td>
-                      <td className="py-3 px-3">{new Date(order.created_at).toLocaleDateString()}</td>
+                      <td className="py-3 px-3">
+                        <span style={{ fontFamily: 'Inter, sans-serif' }}>
+                          {order.id}
+                        </span>
+                       </td>
+                      <td className="py-3 px-3">
+                        <div>{formatDateTime(order.created_at)}</div>
+                        <div className="text-xs text-gray-500">{formatTime(order.created_at)}</div>
+                      </td>
                       <td className="py-3 px-3">{order.customer_name}</td>
                       <td className="py-3 px-3">{order.customer_phone}</td>
                       <td className="py-3 px-3">{order.total} ₽</td>
@@ -169,7 +176,7 @@ function AdminOrders() {
                         <span className={`px-2 py-1 rounded-full text-xs ${className}`}>
                           {label}
                         </span>
-                       </td>
+                      </td>
                       <td className="py-3 px-3" onClick={(e) => e.stopPropagation()}>
                         <select
                           value={order.status}
@@ -181,13 +188,13 @@ function AdminOrders() {
                           <option value="delivered">Доставлен</option>
                           <option value="cancelled">Отменён</option>
                         </select>
-                       </td>
-                     </tr>
+                      </td>
+                    </tr>
                   )
                 })
               )}
             </tbody>
-           </table>
+          </table>
         </div>
       </div>
 
@@ -196,7 +203,9 @@ function AdminOrders() {
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4" onClick={closeModal}>
           <div className="bg-white rounded-lg max-w-4xl w-full max-h-[90vh] overflow-y-auto" onClick={(e) => e.stopPropagation()}>
             <div className="sticky top-0 bg-white border-b border-border p-4 flex justify-between items-center">
-              <h2 className="text-xl font-bold">Заказ №{selectedOrder.id}</h2>
+              <h2 className="text-xl font-bold" style={{ fontFamily: 'Inter, sans-serif' }}>
+                Заказ №{selectedOrder.id}
+              </h2>
               <button onClick={closeModal} className="text-gray-500 hover:text-gray-700 text-2xl">&times;</button>
             </div>
             
@@ -209,9 +218,15 @@ function AdminOrders() {
                   <div>
                     <h3 className="font-semibold text-gray-600 mb-2">Информация о заказе</h3>
                     <div className="space-y-1 text-sm">
-                      <p><span className="text-gray-500">Дата:</span> {new Date(orderDetails.created_at).toLocaleString()}</p>
+                      <p><span className="text-gray-500">Дата и время:</span> {formatDateTime(orderDetails.created_at)}</p>
                       <p><span className="text-gray-500">Статус:</span> <span className={`px-2 py-0.5 rounded-full text-xs ${getStatusBadge(orderDetails.status).className}`}>{getStatusBadge(orderDetails.status).label}</span></p>
                       <p><span className="text-gray-500">Сумма:</span> <span className="font-bold">{orderDetails.total} ₽</span></p>
+                      {orderDetails.payment_method && (
+                        <p><span className="text-gray-500">Метод оплаты:</span> {orderDetails.payment_method === 'card' ? 'Банковская карта' : orderDetails.payment_method}</p>
+                      )}
+                      {orderDetails.payment_status && (
+                        <p><span className="text-gray-500">Статус оплаты:</span> {orderDetails.payment_status === 'succeeded' ? 'Оплачен' : orderDetails.payment_status}</p>
+                      )}
                       {orderDetails.comment && <p><span className="text-gray-500">Комментарий:</span> {orderDetails.comment}</p>}
                     </div>
                   </div>
@@ -221,7 +236,7 @@ function AdminOrders() {
                     <div className="space-y-1 text-sm">
                       <p><span className="text-gray-500">Получатель:</span> {orderDetails.customer_name}</p>
                       <p><span className="text-gray-500">Телефон:</span> {orderDetails.customer_phone}</p>
-                      <p><span className="text-gray-500">Адрес доставки:</span> {orderDetails.delivery_address || 'Не указан'}</p>
+                      <p><span className="text-gray-500">Адрес доставки:</span> {orderDetails.customer_address || 'Не указан'}</p>
                     </div>
                   </div>
                 </div>
@@ -240,12 +255,18 @@ function AdminOrders() {
                         </tr>
                       </thead>
                       <tbody>
-                        {orderDetails.items.map((item, idx) => (
+                        {orderDetails.items?.map((item, idx) => (
                           <tr key={idx} className="border-b border-border">
                             <td className="py-2 px-3">
-                              <div>
-                                <div className="font-medium">{item.products?.name || 'Товар'}</div>
-                                {item.size && <div className="text-xs text-gray-500">Размер: {item.size}</div>}
+                              <div className="flex items-center gap-3">
+                                {item.image_url && (
+                                  <img 
+                                    src={item.image_url} 
+                                    alt={item.name}
+                                    className="w-12 h-12 object-cover rounded"
+                                  />
+                                )}
+                                <div className="font-medium">{item.name}</div>
                               </div>
                             </td>
                             <td className="text-center py-2 px-3">{item.quantity}</td>
