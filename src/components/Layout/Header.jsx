@@ -15,7 +15,7 @@ function Header() {
   })
   const [profileLoading, setProfileLoading] = useState(false)
   const [profileError, setProfileError] = useState('')
-  const [profileSuccess, setProfileSuccess] = useState('')
+  const [showSuccessToast, setShowSuccessToast] = useState(false)
 
   const checkUser = async () => {
     const { data: { user } } = await supabase.auth.getUser()
@@ -67,7 +67,6 @@ function Header() {
       setShowProfileModal(true)
       setShowMenu(false)
       setProfileError('')
-      setProfileSuccess('')
     }
   }
 
@@ -75,7 +74,6 @@ function Header() {
     const { name, value } = e.target
     setProfileData(prev => ({ ...prev, [name]: value }))
     setProfileError('')
-    setProfileSuccess('')
   }
 
   const handleSaveProfile = async () => {
@@ -83,7 +81,6 @@ function Header() {
     
     setProfileLoading(true)
     setProfileError('')
-    setProfileSuccess('')
 
     const updateData = {}
     if (profileData.full_name.trim()) updateData.full_name = profileData.full_name.trim()
@@ -99,19 +96,13 @@ function Header() {
       setProfileError('Ошибка при сохранении')
       console.error(error)
     } else {
-      setProfileSuccess('Данные успешно обновлены')
-      setTimeout(() => setProfileSuccess(''), 3000)
+      setShowSuccessToast(true)
+      setTimeout(() => {
+        setShowSuccessToast(false)
+        setShowProfileModal(false)
+      }, 1500)
     }
     setProfileLoading(false)
-  }
-
-  const formatPhoneForDisplay = (phone) => {
-    if (!phone) return ''
-    const digits = phone.replace(/\D/g, '')
-    if (digits.length === 11 && digits.startsWith('7')) {
-      return `+7 (${digits.slice(1, 4)}) ${digits.slice(4, 7)}-${digits.slice(7, 9)}-${digits.slice(9, 11)}`
-    }
-    return phone
   }
 
   return (
@@ -235,11 +226,6 @@ function Header() {
                   {profileError}
                 </div>
               )}
-              {profileSuccess && (
-                <div className="bg-green-50 text-green-600 p-3 rounded-lg text-sm">
-                  {profileSuccess}
-                </div>
-              )}
 
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">Имя</label>
@@ -278,21 +264,27 @@ function Header() {
               </div>
             </div>
 
-            <div className="flex gap-3 p-6 pt-0">
+            <div className="p-6 pt-0">
               <button
                 onClick={handleSaveProfile}
                 disabled={profileLoading}
-                className="flex-1 bg-primary text-white py-2 rounded-full hover:bg-primary-dark transition disabled:opacity-50"
+                className="w-full bg-primary text-white py-2 rounded-full hover:bg-primary-dark transition disabled:opacity-50"
               >
                 {profileLoading ? 'Сохранение...' : 'Сохранить'}
               </button>
-              <button
-                onClick={() => setShowProfileModal(false)}
-                className="px-6 py-2 rounded-full border border-border hover:bg-gray-50 transition"
-              >
-                Отмена
-              </button>
             </div>
+          </div>
+        </div>
+      )}
+
+      {/* Toast уведомление об успехе */}
+      {showSuccessToast && (
+        <div className="fixed bottom-8 left-1/2 transform -translate-x-1/2 z-50 animate-fade-in">
+          <div className="bg-green-600 text-white px-6 py-3 rounded-full shadow-lg flex items-center gap-2">
+            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+            </svg>
+            <span>Данные обновлены</span>
           </div>
         </div>
       )}
