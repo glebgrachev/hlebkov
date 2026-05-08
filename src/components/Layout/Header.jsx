@@ -15,7 +15,7 @@ function Header() {
   })
   const [profileLoading, setProfileLoading] = useState(false)
   const [profileError, setProfileError] = useState('')
-  const [showSuccessToast, setShowSuccessToast] = useState(false)
+  const [profileSuccess, setProfileSuccess] = useState('')
 
   const checkUser = async () => {
     const { data: { user } } = await supabase.auth.getUser()
@@ -67,6 +67,7 @@ function Header() {
       setShowProfileModal(true)
       setShowMenu(false)
       setProfileError('')
+      setProfileSuccess('')
     }
   }
 
@@ -74,6 +75,7 @@ function Header() {
     const { name, value } = e.target
     setProfileData(prev => ({ ...prev, [name]: value }))
     setProfileError('')
+    setProfileSuccess('')
   }
 
   const handleSaveProfile = async () => {
@@ -81,6 +83,7 @@ function Header() {
     
     setProfileLoading(true)
     setProfileError('')
+    setProfileSuccess('')
 
     const updateData = {}
     if (profileData.full_name.trim()) updateData.full_name = profileData.full_name.trim()
@@ -96,10 +99,10 @@ function Header() {
       setProfileError('Ошибка при сохранении')
       console.error(error)
     } else {
-      setShowSuccessToast(true)
+      setProfileSuccess('Данные обновлены')
       setTimeout(() => {
-        setShowSuccessToast(false)
         setShowProfileModal(false)
+        setProfileSuccess('')
       }, 1500)
     }
     setProfileLoading(false)
@@ -227,6 +230,12 @@ function Header() {
                 </div>
               )}
 
+              {profileSuccess && (
+                <div className="bg-green-50 text-green-600 p-3 rounded-lg text-sm text-center">
+                  {profileSuccess}
+                </div>
+              )}
+
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">Имя</label>
                 <input
@@ -273,18 +282,6 @@ function Header() {
                 {profileLoading ? 'Сохранение...' : 'Сохранить'}
               </button>
             </div>
-          </div>
-        </div>
-      )}
-
-      {/* Toast уведомление об успехе */}
-      {showSuccessToast && (
-        <div className="fixed bottom-8 left-1/2 transform -translate-x-1/2 z-50 animate-fade-in">
-          <div className="bg-green-600 text-white px-6 py-3 rounded-full shadow-lg flex items-center gap-2">
-            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-            </svg>
-            <span>Данные обновлены</span>
           </div>
         </div>
       )}
